@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Setup Required | Sarathi AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans',sans-serif;background:#f0f3fa;min-height:100vh;
+      display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(26,35,126,.12);
+      max-width:640px;width:100%;overflow:hidden}
+    .card-header{background:linear-gradient(135deg,#1a237e,#283593);padding:28px;text-align:center;color:#fff}
+    .card-header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+    .card-header p{font-size:13px;opacity:.8}
+    .card-body{padding:28px}
+    .error-box{background:#fff3e0;border:1.5px solid #ffa726;border-radius:10px;
+      padding:14px 16px;margin-bottom:20px;font-size:13px;color:#e65100;word-break:break-all}
+    .error-box strong{display:block;margin-bottom:4px}
+    h3{font-size:16px;font-weight:700;color:#1a237e;margin-bottom:12px;
+      border-bottom:2px solid #f0f3fa;padding-bottom:8px}
+    .step{background:#f8faff;border-radius:10px;padding:14px 16px;margin-bottom:12px;
+      border-left:4px solid #1a237e}
+    .step-num{font-size:11px;font-weight:700;color:#1a237e;text-transform:uppercase;
+      letter-spacing:.5px;margin-bottom:6px}
+    .step p{font-size:13px;color:#333;line-height:1.6}
+    .code-block{background:#1a1a2e;color:#e0e0e0;border-radius:8px;padding:12px 16px;
+      font-family:'Courier New',monospace;font-size:12px;margin:8px 0;line-height:1.8;
+      overflow-x:auto;white-space:pre}
+    .code-block .key{color:#81d4fa}.code-block .val{color:#a5d6a7}
+    .code-block .comment{color:#78909c}
+    .env-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .env-card{background:#f0f3fa;border-radius:8px;padding:12px}
+    .env-card .env-key{font-size:11px;font-weight:700;color:#1a237e;font-family:monospace;
+      text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .env-card .env-val{font-size:12px;color:#555;line-height:1.5}
+    .env-card a{color:#1565c0;font-size:11px}
+    .try-again-btn{display:block;text-align:center;background:linear-gradient(135deg,#1a237e,#283593);
+      color:#fff;text-decoration:none;padding:14px;border-radius:10px;font-size:15px;
+      font-weight:700;margin-top:20px;transition:.2s}
+    .try-again-btn:hover{opacity:.88;transform:translateY(-1px)}
+    .tip{background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:12px;color:#2e7d32;
+      margin-top:14px;display:flex;align-items:flex-start;gap:6px}
+    @media(max-width:500px){.env-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <h1>⚠️ Database Setup Required</h1>
+    <p>Project Sarathi AI — MongoDB Atlas Configuration</p>
+  </div>
+  <div class="card-body">
+    {% if error %}
+    <div class="error-box"><strong>Error Details:</strong>{{ error }}</div>
+    {% endif %}
+
+    <h3>🔧 Quick Fix — 3 Steps</h3>
+
+    <div class="step">
+      <div class="step-num">Step 1 — Create your .env file</div>
+      <p>Copy <code>.env.example</code> to <code>.env</code> in your project folder:</p>
+      <div class="code-block">copy .env.example .env</div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">Step 2 — Set your MongoDB Atlas URI</div>
+      <p>Open <code>.env</code> and add your MongoDB Atlas connection string:</p>
+      <div class="code-block"><span class="key">MONGODB_URI</span>=<span class="val">mongodb+srv://username:password@cluster.mongodb.net/sarathi_db</span>
+<span class="comment"># Get this from: MongoDB Atlas → Connect → Drivers → Python</span></div>
+      <p style="margin-top:8px;font-size:12px;color:#555">
+        🆓 MongoDB Atlas Free Tier: <a href="https://www.mongodb.com/atlas" target="_blank" style="color:#1565c0">mongodb.com/atlas</a>
+        — M0 cluster is completely free.
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">Step 3 — Install dnspython (for mongodb+srv://)</div>
+      <p>Run this in your project terminal:</p>
+      <div class="code-block">pip install dnspython>=2.6.0
+<span class="comment"># Or install all dependencies:</span>
+pip install -r requirements.txt</div>
+    </div>
+
+    <h3 style="margin-top:20px">🔑 Required .env Keys</h3>
+    <div class="env-grid">
+      <div class="env-card">
+        <div class="env-key">MONGODB_URI</div>
+        <div class="env-val">MongoDB Atlas connection string<br><a href="https://www.mongodb.com/atlas" target="_blank">→ Get free Atlas URI</a></div>
+      </div>
+      <div class="env-card">
+        <div class="env-key">GEMINI_API_KEY</div>
+        <div class="env-val">Google AI Studio API key<br><a href="https://aistudio.google.com" target="_blank">→ Get free Gemini key</a></div>
+      </div>
+      <div class="env-card">
+        <div class="env-key">FAST2SMS_API_KEY</div>
+        <div class="env-val">For SMS OTP (optional)<br><a href="https://www.fast2sms.com" target="_blank">→ Free ₹50 credits</a></div>
+      </div>
+      <div class="env-card">
+        <div class="env-key">MAIL_EMAIL + MAIL_APP_PASSWORD</div>
+        <div class="env-val">Gmail for email OTP<br><a href="https://myaccount.google.com/apppasswords" target="_blank">→ Generate App Password</a></div>
+      </div>
+    </div>
+
+    <div class="tip">
+      💡 <span>After updating <code>.env</code>, restart the server: <strong>python server.py</strong>. The app works without GCP/Gemini keys (browser fallback active) but MongoDB is required.</span>
+    </div>
+
+    <a href="/login" class="try-again-btn">🔄 I've updated .env — Try Again</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!-- ═══════════════════════════════════════════════════════
+     Sarathi Voice Engine v4.1 — Module Loader
+     Replace your single <script src="/static/sarathi_voice.js">
+     with these 8 script tags IN THIS EXACT ORDER
+═══════════════════════════════════════════════════════ -->
+
+<!-- 1. API calls, timeouts, null guards -->
+<script src="/static/voice/api.js"></script>
+
+<!-- 2. Chat UI, bubbles, progress, status bar -->
+<script src="/static/voice/chatUI.js"></script>
+
+<!-- 3. AudioContext, waveform, mic stream -->
+<script src="/static/voice/audio.js"></script>
+
+<!-- 4. Text-to-speech (browser + GCP) -->
+<script src="/static/voice/tts.js"></script>
+
+<!-- 5. Speech-to-text (browser + GCP WebSocket) -->
+<script src="/static/voice/stt.js"></script>
+
+<!-- 6. Form field flow, readback, confirmation -->
+<script src="/static/voice/formFlow.js"></script>
+
+<!-- 7. Eligibility check, scheme recommender -->
+<script src="/static/voice/eligibility.js"></script>
+
+<!-- 8. State, language strings (all 10 langs), OCR, init -->
+<script src="/static/voice/sarathi_main.js"></script>

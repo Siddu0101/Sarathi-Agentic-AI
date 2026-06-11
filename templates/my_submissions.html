@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>My Applications | Sarathi AI</title>
+  <link rel="stylesheet" href="/static/mobile.css">
+  <style>:root{--color:#1a237e;--color-light:#283593;}</style>
+</head>
+<body>
+<div class="tricolor"></div>
+<div class="top-nav">
+  <a href="/">⬅ Dashboard</a>
+  <div class="top-nav-right"><span>👤 {{ user_name }}</span><span class="enc-badge">🔒 Encrypted</span></div>
+</div>
+<div class="outer">
+  <div style="background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:22px 20px;border-radius:var(--radius);margin-bottom:18px;">
+    <h1 style="font-size:20px;font-weight:800;margin-bottom:4px;">📋 My Applications</h1>
+    <p style="opacity:.85;font-size:13px;">Track all your scheme applications and download PDF receipts</p>
+  </div>
+
+  {% if submissions %}
+    {% for s in submissions %}
+    <div class="sub-card" style="display:block;cursor:default;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div class="sub-scheme">{{ s.service_name.replace('_',' ').title() }}</div>
+          <div class="sub-ref">{{ s.ref_id }}</div>
+        </div>
+        <span class="sub-status">{{ s.status.title() }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-3);">
+        <span>🌐 {{ s.language }} · 📅 {{ s.submitted_at[:16].replace('T',' ') }}</span>
+        <button onclick="downloadPdfFor('{{ s.ref_id }}','{{ s.service_name }}')"
+          style="background:var(--primary);color:white;border:none;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">
+          📄 PDF
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div style="text-align:center;padding:40px 20px;background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border);">
+      <div style="font-size:48px;margin-bottom:12px;">📋</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-2);">No applications yet</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:6px;margin-bottom:16px;">Apply for any scheme using your voice</div>
+      <a href="/" style="background:var(--primary);color:white;padding:10px 24px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:700;">Go to Dashboard →</a>
+    </div>
+  {% endif %}
+</div>
+<script>
+function downloadPdfFor(refId, service) {
+  const btn = event.target;
+  btn.textContent = '⏳';
+  fetch('/api/generate_pdf', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ref_id:refId, service:service, data:{}, lang:'en-IN'})
+  }).then(r => r.blob()).then(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `Sarathi_${service}_${refId}.pdf`; a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent = '📄 PDF';
+  }).catch(() => { btn.textContent = '❌'; });
+}
+</script>
+</body>
+</html>

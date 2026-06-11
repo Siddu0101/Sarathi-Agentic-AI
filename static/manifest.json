@@ -1,0 +1,33 @@
+{
+  "name": "Project Sarathi — AI Citizen Portal",
+  "short_name": "Sarathi",
+  "description": "Apply to government schemes using voice AI in your language",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a237e",
+  "theme_color": "#1a237e",
+  "orientation": "portrait-primary",
+  "lang": "te",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "PM Kisan",       "url": "/service/pm_kisan.html",       "description": "PM Kisan Samman Nidhi" },
+    { "name": "Rythu Bandhu",   "url": "/service/rythu_bandhu.html",   "description": "Rythu Bandhu scheme" },
+    { "name": "Aarogyasri",     "url": "/service/aarogyasri.html",     "description": "Aarogyasri health scheme" },
+    { "name": "Aasara Pension", "url": "/service/pension.html",        "description": "Aasara Pension scheme" }
+  ],
+  "categories": ["government", "utilities", "productivity"],
+  "screenshots": []
+}

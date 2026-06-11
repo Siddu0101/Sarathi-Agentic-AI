@@ -1,0 +1,35 @@
+# ── Web framework ─────────────────────────────────────────────────────────────
+flask>=3.0.0
+flask-socketio>=5.3.6
+flask-cors>=4.0.0
+gevent>=24.2.1               # Required for Cloud Run gunicorn --worker-class gevent
+werkzeug>=3.0.0
+python-dotenv>=1.0.0
+cryptography>=42.0.0
+qrcode[pil]>=7.4.2
+Pillow>=10.0.0
+reportlab>=4.0.0
+pytesseract>=0.3.10
+captcha>=0.5.0
+gunicorn>=21.0.0             # Cloud Run deployment
+
+# ── MongoDB (Atlas + MCP) ─────────────────────────────────────────────────────
+pymongo>=4.7.0               # Direct Atlas access + fallback for MCP
+dnspython>=2.6.0             # Required for mongodb+srv:// URIs
+# @mongodb-js/mongodb-mcp-server is launched via npx (Node.js required)
+# Install Node.js 18+ from https://nodejs.org — MCP server auto-installs on first run
+
+# ── Google Cloud / Vertex AI / Gemini 3 ──────────────────────────────────────
+google-genai>=1.16.0          # Unified Gemini SDK (Vertex AI + AI Studio)
+                              # Replaces google-generativeai (legacy, removed)
+google-cloud-aiplatform>=1.65.0   # Vertex AI SDK (Agent Engine, embeddings)
+google-cloud-speech>=2.26.0       # Cloud Speech-to-Text
+google-cloud-texttospeech>=2.16.0 # Cloud Text-to-Speech
+google-cloud-translate>=3.15.0    # Cloud Translation
+google-cloud-secret-manager>=2.20.0 # Secret Manager for production
+
+# ── HTTP + SMS ────────────────────────────────────────────────────────────────
+requests>=2.31.0             # Fast2SMS API + data.gov.in live data
+
+# ── Optional (run once for scheme index seeding) ─────────────────────────────
+# datasets>=2.19.0            # pip install datasets  →  python build_scheme_index.py

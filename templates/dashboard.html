@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a237e">
+  <title>Dashboard | Sarathi AI</title>
+  <link rel="manifest" href="/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#1a237e;--navy2:#283593;--saffron:#FF9933;--green:#138808;
+          --bg:#f0f3fa;--card:#fff;--border:#dce3f0;--text:#1a1a2e;--text2:#4a4a6a}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+    .tricolor-bar{display:flex;height:6px;width:100%}
+    .tricolor-bar .s{flex:1;background:#FF9933}
+    .tricolor-bar .w{flex:1;background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
+    .tricolor-bar .g{flex:1;background:#138808}
+    /* ─── HEADER ─── */
+    .gov-header{background:#fff;border-bottom:2px solid var(--border);padding:10px 28px;
+      display:flex;align-items:center;justify-content:space-between;
+      box-shadow:0 2px 12px rgba(26,35,126,0.10)}
+    .hdr-left{display:flex;align-items:center;gap:12px}
+    .nat-emblem{width:64px;height:80px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25))}
+    .hdr-title h1{font-family:'Noto Serif',serif;font-size:20px;font-weight:700;color:var(--navy)}
+    .hdr-title p{font-size:11px;color:var(--text2);letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+    .hdr-center{display:flex;flex-direction:column;align-items:center;gap:2px}
+    @keyframes chakraSpin{to{transform:rotate(360deg)}}
+    .chakra-spin{width:66px;height:66px;animation:chakraSpin 10s linear infinite}
+    .hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+    .my-apps-btn{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+      text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;
+      display:flex;align-items:center;gap:6px;transition:.2s}
+    .my-apps-btn:hover{opacity:.88;transform:translateY(-1px)}
+    .logout-link{font-size:11px;color:#c62828;text-decoration:none;font-weight:600}
+    .logout-link:hover{text-decoration:underline}
+    /* ─── MARQUEE ─── */
+    .marquee-bar{background:var(--navy);color:#fff;font-size:12px;padding:5px 0;overflow:hidden}
+    .marquee-inner{display:inline-block;white-space:nowrap;animation:marquee 30s linear infinite;padding-left:100%}
+    @keyframes marquee{to{transform:translateX(-100%)}}
+    /* ─── WELCOME STRIP ─── */
+    .welcome-strip{background:linear-gradient(135deg,var(--navy) 0%,#1565c0 60%,#0d47a1 100%);
+      color:#fff;padding:24px 40px;display:flex;align-items:center;justify-content:space-between}
+    .welcome-left{}
+    .welcome-greeting{font-size:26px;font-weight:700;font-family:'Noto Serif',serif}
+    .welcome-quote{font-size:14px;opacity:.85;margin-top:6px;font-style:italic}
+    .welcome-meta{margin-top:10px;display:flex;gap:16px;flex-wrap:wrap}
+    .meta-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600}
+    .welcome-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+    .app-count-badge{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
+      border-radius:12px;padding:10px 20px;text-align:center}
+    .app-count-num{font-size:28px;font-weight:700;display:block}
+    .app-count-label{font-size:11px;opacity:.8;display:block}
+    /* ─── VOICE SCHEME FINDER ─── */
+    .voice-finder-section{background:linear-gradient(135deg,#e8f5e9,#e3f2fd);
+      border-bottom:1px solid var(--border);padding:20px 40px}
+    .voice-finder-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:12px;
+      display:flex;align-items:center;gap:8px}
+    .voice-finder-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .scheme-mic-btn{background:linear-gradient(135deg,#2e7d32,#388e3c);color:#fff;border:none;
+      border-radius:50px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;
+      box-shadow:0 4px 16px rgba(46,125,50,.35);transition:.2s;display:flex;align-items:center;gap:8px}
+    .scheme-mic-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(46,125,50,.45)}
+    .scheme-mic-btn.listening{background:linear-gradient(135deg,#c62828,#e53935);
+      animation:micPulse .8s ease-in-out infinite}
+    @keyframes micPulse{0%,100%{box-shadow:0 4px 16px rgba(198,40,40,.3)}
+      50%{box-shadow:0 8px 30px rgba(198,40,40,.6)}}
+    #scheme-voice-waveform{display:none;align-items:center;gap:3px;height:32px}
+    #scheme-voice-waveform.active{display:flex}
+    .swv-bar{width:3px;background:#2e7d32;border-radius:2px;height:8px;
+      animation:wave 1s ease-in-out infinite}
+    .swv-bar:nth-child(odd){animation-delay:.2s}.swv-bar:nth-child(even){animation-delay:.4s}
+    @keyframes wave{0%,100%{height:8px}50%{height:24px}}
+    .scheme-voice-result{flex:1;min-width:200px;background:#fff;border:1.5px solid var(--border);
+      border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text2);min-height:44px}
+    .voice-lang-note{font-size:12px;color:#555;margin-top:8px}
+    /* ─── MAIN CONTENT ─── */
+    .main-content{flex:1;padding:24px 40px}
+    .section-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px;
+      font-family:'Noto Serif',serif;display:flex;align-items:center;gap:8px}
+    .section-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+    /* ─── CATEGORY TABS ─── */
+    .cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .cat-tab{padding:7px 18px;border:2px solid var(--border);border-radius:25px;
+      font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:#fff;color:var(--text2)}
+    .cat-tab.active,.cat-tab:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+    /* ─── SCHEME GRID ─── */
+    .schemes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .scheme-card{background:var(--card);border-radius:18px;border:1px solid var(--border);
+      box-shadow:0 3px 16px rgba(26,35,126,.07);overflow:hidden;cursor:pointer;transition:.22s;
+      text-decoration:none;display:flex;flex-direction:column;position:relative}
+    .scheme-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(26,35,126,.17);border-color:transparent}
+    .scheme-card-header{padding:22px 22px 12px;display:flex;align-items:flex-start;gap:14px}
+    .scheme-icon-wrap{width:62px;height:62px;border-radius:16px;display:flex;align-items:center;
+      justify-content:center;font-size:30px;flex-shrink:0;color:#fff}
+    .scheme-card-title{font-size:17px;font-weight:700;color:var(--text)}
+    .scheme-card-full{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.4}
+    .scheme-card-body{padding:0 22px 12px;flex:1}
+    .scheme-card-desc{font-size:13px;color:var(--text2);line-height:1.65}
+    .scheme-card-footer{padding:12px 22px 18px;border-top:1px solid #f0f3fa;
+      display:flex;align-items:center;justify-content:space-between}
+    .scheme-benefit-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;color:#fff}
+    .scheme-category-tag{font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    .apply-arrow{font-size:20px;transition:.2s}
+    .scheme-card:hover .apply-arrow{transform:translateX(5px)}
+    /* ─── RECENT APPS ─── */
+    .recent-section{margin-top:36px}
+    .recent-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;
+      overflow:hidden;box-shadow:0 2px 12px rgba(26,35,126,.07)}
+    .recent-table th{background:var(--navy);color:#fff;padding:11px 16px;font-size:12px;
+      text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .recent-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text)}
+    .recent-table tr:last-child td{border-bottom:none}
+    .recent-table tr:hover td{background:#f8faff}
+    .status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+    .status-submitted{background:#e3f2fd;color:#1565c0}
+    .status-approved{background:#e8f5e9;color:#2e7d32}
+    .status-rejected{background:#ffebee;color:#c62828}
+    /* ─── FOOTER ─── */
+    .pro-footer{background:var(--navy);color:rgba(255,255,255,.85);font-size:12px}
+    .footer-top{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:28px 48px 20px}
+    .footer-col h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;
+      border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:6px}
+    .footer-col p{color:rgba(255,255,255,.7);line-height:1.7;font-size:12px}
+    .footer-col a{color:rgba(255,255,255,.7);text-decoration:none;display:block;
+      margin-bottom:5px;font-size:12px;transition:.2s}
+    .footer-col a:hover{color:#fff}
+    .footer-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .footer-tags span{background:rgba(255,255,255,.1);padding:3px 8px;border-radius:4px;font-size:10px}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.15);padding:14px 48px;text-align:center}
+    .footer-bottom p{color:rgba(255,255,255,.6);font-size:11.5px}
+    /* ─── RESPONSIVE ─── */
+    @media(max-width:1100px){.schemes-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){
+      .schemes-grid{grid-template-columns:1fr}
+      .gov-header{padding:8px 14px}
+      .welcome-strip{padding:18px 20px;flex-direction:column;gap:12px}
+      .welcome-right{align-items:flex-start}
+      .main-content{padding:16px 16px}
+      .voice-finder-section{padding:16px}
+      .footer-top{grid-template-columns:1fr 1fr;padding:20px}
+      .footer-bottom{padding:12px 20px}
+    }
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"><span class="s"></span><span class="w"></span><span class="g"></span></div>
+
+<header class="gov-header">
+  <div class="hdr-left">
+    <img class="nat-emblem" src="/static/state_emblem.png" alt="State Emblem of India">
+    <div class="hdr-title"><h1>Project Sarathi AI</h1><p>Digital India — Citizen Services Portal</p></div>
+  </div>
+  <div class="hdr-center">
+    <svg class="chakra-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#003580" stroke-width="4"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#003580" stroke-width="1"/>
+      <circle cx="50" cy="50" r="7" fill="#003580"/>
+      <circle cx="50" cy="50" r="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <g stroke="#003580" stroke-width="1.8" stroke-linecap="round">
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(0 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(15 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(30 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(45 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(60 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(75 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(90 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(105 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(120 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(135 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(150 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(165 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(180 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(195 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(210 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(225 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(240 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(255 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(270 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(285 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(300 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(315 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(330 50 50)"/><line x1="50" y1="43" x2="50" y2="8" transform="rotate(345 50 50)"/>
+      </g>
+    </svg>
+  </div>
+  <div class="hdr-right">
+    <a href="/my_submissions" class="my-apps-btn">📋 My Applications</a>
+    <a href="/logout" class="logout-link">🚪 Logout</a>
+  </div>
+</header>
+
+<div class="marquee-bar">
+  <div class="marquee-inner">🇮🇳 &nbsp; Welcome to Sarathi AI — India's AI-Powered Citizen Services Portal &nbsp;|&nbsp; 25 National Schemes &nbsp;|&nbsp; 22 Indian Languages &nbsp;|&nbsp; Voice-First, Secure, Encrypted &nbsp;|&nbsp; सत्यमेव जयते &nbsp;🇮🇳</div>
+</div>
+
+<div class="welcome-strip">
+  <div class="welcome-left">
+    <div class="welcome-greeting">🙏 Welcome, {{ user_name }}!</div>
+    <div class="welcome-quote">"एक कदम, सरकारी योजनाओं की ओर — Your gateway to India's welfare schemes"</div>
+    <div class="welcome-meta">
+      <span class="meta-pill">🌐 Language: {{ lang_display }}</span>
+      {% if user_state %}<span class="meta-pill">📍 {{ user_state }}</span>{% endif %}
+      <span class="meta-pill">🔒 Session Secure</span>
+      <span class="meta-pill">🤖 AI-Powered</span>
+    </div>
+  </div>
+  <div class="welcome-right">
+    <div class="app-count-badge">
+      <span class="app-count-num">{{ submissions|length if submissions else 0 }}</span>
+      <span class="app-count-label">Applications</span>
+    </div>
+  </div>
+</div>
+
+<div class="voice-finder-section">
+  <div class="voice-finder-title">🎙️ AI Voice Scheme Finder — Speak to find the right scheme for you</div>
+  <div class="voice-finder-inner">
+    <button class="scheme-mic-btn" id="schemeMicBtn" onclick="startSchemeFinder()">
+      🎙️ Tap to Speak — Find Your Scheme
+    </button>
+    <div id="scheme-voice-waveform">
+      <div class="swv-bar"></div><div class="swv-bar"></div><div class="swv-bar"></div>
+      <div class="swv-bar"></div><div class="swv-bar"></div><div class="swv-bar"></div>
+      <div class="swv-bar"></div><div class="swv-bar"></div>
+    </div>
+    <div class="scheme-voice-result" id="scheme-voice-result">
+      Tell me what you need — I'll find the right scheme and take you directly to it. Speak in any of 22 Indian languages!
+    </div>
+  </div>
+  <div class="voice-lang-note">🌐 Speaks in your state language automatically ({{ lang_display }}) · Also supports: हिन्दी, தமிழ், తెలుగు, বাংলা, मराठी, ગુજરાતી, ಕನ್ನಡ, മലയാളം, ਪੰਜਾਬੀ, اردو and more</div>
+</div>
+
+<main class="main-content">
+  <div class="section-title">🏛️ All Government Schemes</div>
+  <div class="section-sub">Select any scheme to apply — AI voice assistant guides you through the entire process</div>
+
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterSchemes('all',this)">🇮🇳 All Schemes</button>
+    <button class="cat-tab" onclick="filterSchemes('Agriculture',this)">🌾 Agriculture</button>
+    <button class="cat-tab" onclick="filterSchemes('Health',this)">🏥 Health</button>
+    <button class="cat-tab" onclick="filterSchemes('Financial',this)">💰 Financial</button>
+    <button class="cat-tab" onclick="filterSchemes('Insurance',this)">🛡️ Insurance</button>
+    <button class="cat-tab" onclick="filterSchemes('Housing',this)">🏠 Housing & Welfare</button>
+    <button class="cat-tab" onclick="filterSchemes('Employment',this)">⛏️ Employment</button>
+    <button class="cat-tab" onclick="filterSchemes('Women',this)">👩 Women & Child</button>
+    <button class="cat-tab" onclick="filterSchemes('Skills',this)">🎓 Skills</button>
+    <button class="cat-tab" onclick="filterSchemes('Energy',this)">☀️ Energy</button>
+    <button class="cat-tab" onclick="filterSchemes('Pension',this)">👴 Pension</button>
+  </div>
+
+  <div class="schemes-grid" id="schemes-grid">
+    {% set color_map = {
+      'pm_kisan': '#2e7d32', 'pmfby': '#1b5e20', 'ayushman_bharat': '#1565c0',
+      'swachh_bharat': '#e65100', 'jal_jeevan': '#0277bd', 'jan_dhan': '#4a148c',
+      'mudra_yojana': '#bf360c', 'pmjjby': '#1a237e', 'pmsby': '#33691e',
+      'atal_pension': '#4e342e', 'pmay': '#880e4f', 'ujjwala': '#e65100',
+      'mgnrega': '#37474f', 'pm_svanidhi': '#006064', 'pm_vishwakarma': '#4e342e',
+      'pm_surya_ghar': '#f57f17', 'pmgsy': '#263238', 'lakhpati_didi': '#880e4f',
+      'sukanya_samriddhi': '#e91e63', 'poshan_abhiyaan': '#2e7d32', 'pmkvy': '#0d47a1',
+      'standup_india': '#1a237e', 'pm_sym': '#37474f', 'pmbjp': '#1b5e20', 'pmmsy': '#006064'
+    } %}
+    {% set cat_map = {
+      'pm_kisan':'Agriculture','pmfby':'Agriculture','ayushman_bharat':'Health',
+      'swachh_bharat':'Health','jal_jeevan':'Health','jan_dhan':'Financial',
+      'mudra_yojana':'Financial','pmjjby':'Insurance','pmsby':'Insurance',
+      'atal_pension':'Pension','pmay':'Housing','ujjwala':'Housing',
+      'mgnrega':'Employment','pm_svanidhi':'Employment','pm_vishwakarma':'Employment',
+      'pm_surya_ghar':'Energy','pmgsy':'Infrastructure','lakhpati_didi':'Women',
+      'sukanya_samriddhi':'Women','poshan_abhiyaan':'Women','pmkvy':'Skills',
+      'standup_india':'Skills','pm_sym':'Pension','pmbjp':'Health','pmmsy':'Agriculture'
+    } %}
+    {% for sid, s in schemes.items() %}
+    {% set cat = cat_map.get(sid,'Other') %}
+    <a href="/service/{{ sid }}" class="scheme-card" data-category="{{ cat }}">
+      <div class="scheme-card-header">
+        <div class="scheme-icon-wrap" style="background:{{ color_map.get(sid,'#1a237e') }}">{{ s.icon }}</div>
+        <div>
+          <div class="scheme-card-title">{{ s.name }}</div>
+          <div class="scheme-card-full">{{ s.full_name }}</div>
+        </div>
+      </div>
+      <div class="scheme-card-body">
+        <div class="scheme-card-desc">{{ s.description[:110] }}…</div>
+      </div>
+      <div class="scheme-card-footer">
+        <div>
+          <span class="scheme-benefit-pill" style="background:{{ color_map.get(sid,'#1a237e') }}">{{ s.benefit_pill }}</span>
+          <div class="scheme-category-tag" style="margin-top:4px">{{ cat }}</div>
+        </div>
+        <span class="apply-arrow">→</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if submissions %}
+  <div class="recent-section">
+    <div class="section-title" style="font-size:18px">📋 Your Recent Applications</div>
+    <table class="recent-table">
+      <thead>
+        <tr><th>Reference ID</th><th>Scheme</th><th>Language</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for s in submissions[:5] %}
+        <tr>
+          <td><strong>{{ s.ref_id }}</strong></td>
+          <td>{{ s.service_name.replace('_',' ').title() }}</td>
+          <td>{{ s.language }}</td>
+          <td><span class="status-pill status-{{ s.status }}">{{ s.status.title() }}</span></td>
+          <td>{{ s.submitted_at[:10] if s.submitted_at else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if submissions|length > 5 %}
+    <div style="text-align:right;margin-top:10px">
+      <a href="/my_submissions" style="color:var(--navy);font-weight:700;font-size:13px;text-decoration:none">
+        View all {{ submissions|length }} applications →
+      </a>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</main>
+
+<footer class="pro-footer">
+  <div class="footer-top">
+    <div class="footer-col">
+      <h4>🇮🇳 Project Sarathi AI</h4>
+      <p>AI-powered voice-first citizen services connecting all Indians to 25 national welfare schemes in 22 Indian languages.</p>
+      <div class="footer-tags">
+        <span>Digital India</span><span>MeitY</span><span>AI for Good</span><span>Make in India</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="/">Dashboard</a>
+      <a href="/my_submissions">My Applications</a>
+      <a href="/logout">Logout</a>
+      <a href="https://myscheme.gov.in" target="_blank">MyScheme Portal</a>
+    </div>
+    <div class="footer-col">
+      <h4>Government Portals</h4>
+      <a href="https://india.gov.in" target="_blank">India.gov.in</a>
+      <a href="https://digitalindia.gov.in" target="_blank">Digital India</a>
+      <a href="https://digilocker.gov.in" target="_blank">DigiLocker</a>
+      <a href="https://umang.gov.in" target="_blank">UMANG</a>
+      <a href="https://myscheme.gov.in" target="_blank">MyScheme</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact & Support</h4>
+      <p>Government of India<br>Hyderabad – 500 001</p>
+      <p style="margin-top:8px">📞 Helpline: 1800-111-555<br>✉️ support@sarathi.gov.in</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Project Sarathi · Government of India · All Rights Reserved</p>
+    <p style="margin-top:4px;color:rgba(255,255,255,.4);font-size:10px">This is an official government digital services portal. All data is encrypted. For grievances, contact your nearest CSC.</p>
+  </div>
+</footer>
+
+<script>
+// Expose Server Variables
+window.SARATHI_USE_GCP_STT = {{ use_gcp_stt | default(false) | tojson }};
+window.SARATHI_USE_GCP_TTS = {{ use_gcp_tts | default(false) | tojson }};
+window.SARATHI_USE_GEMINI = {{ use_gemini | default(false) | tojson }};
+let USER_LANG = "{{ user_lang }}";
+let LANG_DISPLAY = "{{ lang_display }}";
+let LANG_CONFIRMED = {{ lang_confirmed | default(false)|tojson }};
+
+function filterSchemes(cat, btn) {
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.scheme-card').forEach(card=>{
+    if(cat==='all') { card.style.display=''; return; }
+    card.style.display = card.dataset.category===cat ? '' : 'none';
+  });
+}
+
+const SCHEME_PROMPTS = {
+  'te-IN': 'మీరు ఏ సరకారీ పథకానికి దరఖాస్తు చేయాలనుకుంటున్నారు? పథకం పేరు చెప్పండి.',
+  'hi-IN': 'आप किस सरकारी योजना के लिए आवेदन करना चाहते हैं? योजना का नाम बताइए।',
+  'en-IN': 'Which government scheme would you like to apply for? Please say the scheme name.',
+};
+const SCHEME_REDIRECT_MSGS = {
+  'te-IN': 'మిమ్మల్ని పథకం పేజీకి తీసుకుపోతున్నాను...',
+  'hi-IN': 'आपको उस योजना के पृष्ठ पर ले जा रहे हैं...',
+  'en-IN': 'Taking you to that scheme page...',
+};
+const SCHEME_NOT_FOUND_MSGS = {
+  'te-IN': 'పథకం అర్థం కాలేదు. దయచేసి మళ్ళీ చెప్పండి లేదా నేరుగా పథకాన్ని ఎంచుకోండి.',
+  'hi-IN': 'योजना नहीं मिली। कृपया दोबारा बोलें या नीचे से चुनें।',
+  'en-IN': "I couldn't match a scheme. Please say the name again or select below.",
+};
+
+const LANG_CONFIRM_MSG = {
+  "te-IN": "నమస్కారం! నేను మీతో తెలుగులో మాట్లాడవచ్చా? అవును లేదా కాదు చెప్పండి.",
+  "hi-IN": "नमस्ते! क्या मैं आपसे हिंदी में बात कर सकता हूँ? हाँ या नहीं बोलें।",
+  "en-IN": "Hello! Can I proceed with you in English? Say Yes or No.",
+};
+
+let schemeListening = false;
+let schemeRecognition = null;
+
+function startSchemeFinder() {
+  if (schemeListening) { stopSchemeFinder(); return; }
+  
+  if (!LANG_CONFIRMED) {
+      runDashboardLangConfirmation();
+      return;
+  }
+  
+  startSchemeQuestion();
+}
+
+function runDashboardLangConfirmation() {
+    const btn = document.getElementById('schemeMicBtn');
+    const result = document.getElementById('scheme-voice-result');
+    const waveform = document.getElementById('scheme-voice-waveform');
+    
+    btn.classList.add('listening');
+    btn.innerHTML = '⏹ Stop';
+    schemeListening = true;
+    
+    const confirmMsg = LANG_CONFIRM_MSG[USER_LANG] || LANG_CONFIRM_MSG['en-IN'];
+    result.textContent = '🔊 ' + confirmMsg;
+    
+    speakText(confirmMsg, USER_LANG, () => {
+        waveform.classList.add('active');
+        result.textContent = '🎧 Listening for Yes/No...';
+        
+        listenForText(USER_LANG, (text) => {
+            waveform.classList.remove('active');
+            if (!text) { confirmLangAndProceed(USER_LANG); return; }
+            
+            const t = text.toLowerCase();
+            const YES = ["yes","yeah","ok","okay","avunu","ha","haa","haan","aha","అవును","సరే","हाँ","हां","ہاں"];
+            const NO  = ["no","nope","not","nahi","kadu","illa","killa","ledu","vendam","కాదు","இல்லை","नहीं"];
+            
+            if (YES.some(w => t.includes(w)) || (!YES.some(w => t.includes(w)) && !NO.some(w => t.includes(w)))) {
+                confirmLangAndProceed(USER_LANG);
+            } else {
+                confirmLangAndProceed("hi-IN"); // Default fallback if they say no
+            }
+        });
+    });
+}
+
+function confirmLangAndProceed(lang) {
+    USER_LANG = lang;
+    LANG_CONFIRMED = true;
+    fetch('/api/confirm_language', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({lang: lang}),
+    }).catch(() => {});
+    
+    speakText(lang === 'hi-IN' ? "मैं हिंदी में आपकी मदद करूँगा।" : (lang === 'te-IN' ? "నేను తెలుగులో మీకు సహాయం చేస్తాను." : "I'll guide you in English."), lang, () => {
+        setTimeout(startSchemeQuestion, 600);
+    });
+}
+
+function startSchemeQuestion() {
+  const btn = document.getElementById('schemeMicBtn');
+  const waveform = document.getElementById('scheme-voice-waveform');
+  const result = document.getElementById('scheme-voice-result');
+
+  const prompt = SCHEME_PROMPTS[USER_LANG] || SCHEME_PROMPTS['en-IN'];
+  btn.classList.add('listening');
+  btn.innerHTML = '⏹ Stop';
+  result.textContent = '🔊 ' + prompt;
+  schemeListening = true;
+
+  speakText(prompt, USER_LANG, () => {
+      waveform.classList.add('active');
+      result.textContent = '🎧 Listening… Say the scheme name.';
+      listenForText(USER_LANG, (transcript) => {
+          stopSchemeFinder();
+          if (!transcript) {
+              const notFound = SCHEME_NOT_FOUND_MSGS[USER_LANG] || SCHEME_NOT_FOUND_MSGS['en-IN'];
+              result.textContent = '🤔 ' + notFound;
+              speakText(notFound, USER_LANG);
+              return;
+          }
+          result.textContent = '🎧 ' + transcript;
+          matchScheme(transcript, result);
+      });
+  });
+}
+
+function listenForText(lang, callback) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { callback(""); return; }
+    
+    const rec = new SR();
+    rec.lang = lang;
+    rec.continuous = false;
+    let fired = false;
+    
+    const done = (t) => { if(!fired){ fired=true; callback(t||""); }};
+    rec.onresult = e => done(e.results[0][0].transcript);
+    rec.onerror = () => done("");
+    rec.onend = () => done("");
+    
+    const timeout = setTimeout(() => { try{rec.stop();}catch(e){} done(""); }, 8000);
+    try { rec.start(); } catch(e) { clearTimeout(timeout); done(""); }
+}
+
+function stopSchemeFinder() {
+  schemeListening = false;
+  const btn = document.getElementById('schemeMicBtn');
+  if (btn) { btn.classList.remove('listening'); btn.innerHTML = '🎙️ Tap to Speak — Find Your Scheme'; }
+  const wf = document.getElementById('scheme-voice-waveform');
+  if (wf) wf.classList.remove('active');
+}
+
+function matchScheme(text, resultElement) {
+  const t = text.toLowerCase();
+  const keywords = {
+    'pm_kisan':['kisan','farmer','kisaan','agriculture','rytu','rythu','pm kisan','6000','కిసాన్','కృషి','किसान'],
+    'pmfby':['fasal bima','crop insurance','pmfby','crops','పంట బీమా','फसल बीमा'],
+    'ayushman_bharat':['ayushman','pmjay','hospital','health','ఆయుష్మాన్','आयुष्मान','health cover'],
+    'swachh_bharat':['toilet','swachh','sanitation','స్వచ్ఛ','स्वच्छ'],
+    'jal_jeevan':['water','jal','tap','జల్','जल','har ghar'],
+    'jan_dhan':['jan dhan','bank account','pmjdy','zero balance','జన్ ధన్','जन धन'],
+    'mudra_yojana':['mudra','business loan','small business','ముద్ర','मुद्रा'],
+    'pmjjby':['life insurance','jeevan jyoti','pmjjby','జీవన్ జ్యోతి','जीवन ज्योति'],
+    'pmsby':['accident','suraksha','pmsby','సురక్ష','सुरक्षा'],
+    'atal_pension':['pension','retirement','atal','apy','పెన్షన్','पेंशन'],
+    'pmay':['house','housing','awas','pmay','home','ఇల్లు','आवास','గృహ'],
+    'ujjwala':['lpg','gas','ujjwala','cylinder','ఉజ్వల','उज्ज्वला'],
+    'mgnrega':['employment','mgnrega','100 days','నరేగా','narega','मनरेगा'],
+    'pm_svanidhi':['vendor','street vendor','svanidhi','వెండర్','స్వనిధి','स्वनिधि'],
+    'pm_vishwakarma':['artisan','vishwakarma','carpenter','విశ్వకర్మ','विश्वकर्मा'],
+    'pm_surya_ghar':['solar','surya','electricity','rooftop','సూర్య','सूर्य','bijli'],
+    'pmgsy':['road','village road','pmgsy','gram sadak','రోడ్'],
+    'lakhpati_didi':['shg','lakhpati','didi','self help','లఖ్పతి','लखपति'],
+    'sukanya_samriddhi':['sukanya','girl child','daughter','beti','సుకన్య','सुकन्या'],
+    'poshan_abhiyaan':['nutrition','poshan','anganwadi','పోషణ్','पोषण'],
+    'pmkvy':['skill','training','pmkvy','నైపుణ్యం','कौशल','certificate'],
+    'standup_india':['sc st','scheduled','standup','startup','స్టాండప్'],
+    'pm_sym':['unorganized','worker','maandhan','sym','మాన్ ధన్','मानधन'],
+    'pmbjp':['medicine','janaushadhi','జనౌషధి','जनौषधि','generic'],
+    'pmmsy':['fish','fishing','matsya','matshy','చేపలు','मत्स्य'],
+  };
+  
+  let best = null, bestScore = 0;
+  for (const [id, words] of Object.entries(keywords)) {
+    const score = words.filter(w=>t.includes(w)).length;
+    if (score>bestScore) { bestScore=score; best=id; }
+  }
+  
+  if (best && bestScore>0) {
+    const redirectMsg = SCHEME_REDIRECT_MSGS[USER_LANG] || SCHEME_REDIRECT_MSGS['en-IN'];
+    resultElement.innerHTML = '✅ <strong>Redirecting to ' + best.replace(/_/g,' ').toUpperCase() + '...</strong>';
+    speakText(redirectMsg, USER_LANG, () => {
+        window.location.href='/service/'+best;
+    });
+  } else {
+    const notFound = SCHEME_NOT_FOUND_MSGS[USER_LANG] || SCHEME_NOT_FOUND_MSGS['en-IN'];
+    resultElement.textContent = '🤔 ' + notFound;
+    speakText(notFound, USER_LANG);
+  }
+}
+
+function speakText(text, lang, callback) {
+  if(!('speechSynthesis' in window)) { if(callback) callback(); return; }
+  window.speechSynthesis.cancel();
+  
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang || USER_LANG;
+  u.rate = 0.9;
+  
+  let fired = false;
+  const fire = () => { if(!fired && callback) { fired = true; callback(); } };
+  
+  u.onend = fire; u.onerror = fire;
+  
+  const checkSpeaking = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+          clearInterval(checkSpeaking);
+          setTimeout(fire, 500); 
+      }
+  }, 200);
+
+  setTimeout(() => { clearInterval(checkSpeaking); fire(); }, Math.max(4000, text.split(' ').length * 500));
+  window.speechSynthesis.speak(u);
+}
+</script>
+
+<script src="/static/voice/api.js"></script>
+<script src="/static/voice/audio.js"></script>
+<script src="/static/voice/stt.js"></script>
+<script src="/static/voice/tts.js"></script>
+</body>
+</html>

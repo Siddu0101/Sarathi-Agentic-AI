@@ -1,0 +1,43 @@
+# ── Secrets — must NEVER enter the Docker image ──────────────────────────────
+.env
+sarathi_enc.key
+*.key
+*.pem
+*.p12
+secrets/
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+.git
+.gitignore
+
+# ── Python bytecode ───────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# ── Dev / local only ─────────────────────────────────────────────────────────
+.env.example
+*.zip
+*.tar.gz
+venv/
+.venv/
+env/
+.env/
+node_modules/
+*.log
+*.tmp
+
+# ── IDE and OS ────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ── Test / docs ───────────────────────────────────────────────────────────────
+tests/
+test_*.py
+*_test.py
+docs/
+README.md

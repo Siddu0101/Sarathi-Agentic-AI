@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Sarathi</title>
+  <link rel="stylesheet" href="/static/mobile.css">
+</head>
+<body style="background:linear-gradient(135deg,#1a237e,#283593);">
+<div class="auth-outer">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="logo-icon">🛡️</span>
+      <h1>Admin Access</h1>
+      <p>Sarathi AI — Restricted Area</p>
+    </div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}<div class="flash-msg">⚠️ {{ msg }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+    <form method="POST">
+      <div class="auth-field">
+        <label>Admin Password</label>
+        <input class="auth-input" type="password" name="password" placeholder="Enter admin password" required autofocus>
+      </div>
+      <button type="submit" class="auth-btn" style="background:linear-gradient(135deg,#1a237e,#283593);">Enter Admin →</button>
+    </form>
+    <div class="auth-link"><a href="/login">← Back to portal</a></div>
+  </div>
+</div>
+</body>
+</html>

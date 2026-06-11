@@ -1,0 +1,64 @@
+{
+  "_comment": "Sarathi v10 — Google Cloud Agent Builder + MongoDB MCP configuration",
+  "_docs": {
+    "mcp_server":    "https://www.mongodb.com/docs/atlas/mcp-integration/",
+    "vertex_ai":     "https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine",
+    "gemini_model":  "https://ai.google.dev/gemini-api/docs/models#gemini-3.5-flash",
+    "free_trial":    "Vertex AI is covered by the $300 Google Cloud free trial"
+  },
+
+  "model": {
+    "provider":  "vertex_ai",
+    "name":      "gemini-3.5-flash",
+    "prev_name": "gemini-2.0-flash (EOL 2026-06-01)",
+    "embedding": "text-embedding-005",
+    "embedding_dims": 768,
+    "agent_engine": "google-cloud-agent-builder"
+  },
+
+  "vertex_ai": {
+    "env_var_project":  "GOOGLE_CLOUD_PROJECT",
+    "env_var_location": "GOOGLE_CLOUD_LOCATION",
+    "default_location": "us-central1",
+    "auth": "Application Default Credentials (gcloud auth / Cloud Run service account)",
+    "free_trial_eligible": true
+  },
+
+  "mcp_server": {
+    "package":    "@mongodb-js/mongodb-mcp-server",
+    "transport":  "stdio",
+    "launcher":   "npx -y @mongodb-js/mongodb-mcp-server --connectionString $MONGODB_URI",
+    "requires":   "Node.js 18+ (https://nodejs.org)",
+    "env_var":    "MONGODB_URI",
+    "client":     "mcp_client.py (MongoMCPClient)",
+    "integration": "sarathi_agent.py (init_mcp + execute_tool routes through MCP)"
+  },
+
+  "mcpServers": {
+    "mongodb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mongodb-js/mongodb-mcp-server",
+        "--connectionString",
+        "${MONGODB_URI}"
+      ],
+      "env": {
+        "MONGODB_URI": "${MONGODB_URI}"
+      }
+    }
+  },
+
+  "agentBuilder": {
+    "system_prompt": "You are Sarathi, a warm AI assistant helping Indian citizens apply for government welfare schemes. Collect form fields one at a time. Use the provided tools to save submissions and check eligibility.",
+    "tools": [
+      "sarathi_save_submission",
+      "sarathi_get_submission",
+      "sarathi_list_submissions",
+      "sarathi_check_eligibility",
+      "sarathi_collect_form"
+    ],
+    "max_tool_rounds": 6,
+    "temperature": 0.2
+  }
+}

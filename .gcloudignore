@@ -1,0 +1,36 @@
+# .gcloudignore — excludes files from Cloud Build upload (speeds up gcloud builds submit)
+# Syntax mirrors .gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env.bak
+
+# Test and dev files
+*.bak
+*.test
+tests/
+
+# Local IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Node (MCP server is installed at build time via Dockerfile)
+node_modules/
+
+# Local logs
+*.log

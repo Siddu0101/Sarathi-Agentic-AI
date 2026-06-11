@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Sarathi AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#1a237e;--navy2:#283593;--green:#2e7d32;--red:#c62828;--saffron:#FF9933;
+          --bg:#f0f3fa;--card:#fff;--border:#dce3f0}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+    .tricolor-bar{display:flex;height:6px}
+    .tricolor-bar span{flex:1}
+    .tricolor-bar .s{background:#FF9933}.tricolor-bar .w{background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
+    .tricolor-bar .g{background:#138808}
+    .admin-header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+      padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+    .admin-header h1{font-family:'Noto Serif',serif;font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px}
+    .admin-header-right{display:flex;gap:12px;align-items:center}
+    .hdr-btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;text-decoration:none}
+    .hdr-btn.white{background:#fff;color:var(--navy)}
+    .hdr-btn.red{background:#c62828;color:#fff}
+    /* ─── STATS ─── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 32px 0}
+    .stat-card{background:var(--card);border-radius:14px;padding:20px;
+      box-shadow:0 2px 12px rgba(26,35,126,.08);border:1px solid var(--border)}
+    .stat-num{font-size:32px;font-weight:700;color:var(--navy)}
+    .stat-label{font-size:13px;color:#666;margin-top:4px}
+    .stat-icon{font-size:28px;margin-bottom:8px;display:block}
+    /* ─── HEALTH BADGES ─── */
+    .health-section{padding:16px 32px}
+    .health-badges{display:flex;flex-wrap:wrap;gap:8px}
+    .hbadge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
+    .hbadge.on{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+    .hbadge.off{background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+    /* ─── FILTER ─── */
+    .filter-row{padding:0 32px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .filter-row label{font-size:13px;font-weight:600;color:#333}
+    .filter-select{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;
+      outline:none;background:#fff;cursor:pointer}
+    .filter-select:focus{border-color:var(--navy)}
+    #search-input{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;
+      font-size:13px;outline:none;width:240px}
+    #search-input:focus{border-color:var(--navy)}
+    .export-btn{margin-left:auto;padding:8px 18px;background:var(--navy);color:#fff;
+      border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+    /* ─── TABLE ─── */
+    .table-section{padding:0 32px 32px;overflow-x:auto}
+    .section-title{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;
+      font-family:'Noto Serif',serif;display:flex;align-items:center;gap:8px}
+    .admin-table{width:100%;border-collapse:collapse;background:var(--card);
+      border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(26,35,126,.08)}
+    .admin-table th{background:var(--navy);color:#fff;padding:11px 14px;font-size:12px;
+      text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+    .admin-table td{padding:9px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+    .admin-table tr:last-child td{border-bottom:none}
+    .admin-table tr:hover td{background:#f8faff}
+    .status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+    .status-submitted{background:#e3f2fd;color:#1565c0}
+    .status-approved{background:#e8f5e9;color:#2e7d32}
+    .status-rejected{background:#ffebee;color:#c62828}
+    .scheme-tag{background:#f0f3fa;padding:2px 8px;border-radius:5px;font-size:11px;color:#333;font-weight:600}
+    /* ─── ACTION BUTTONS ─── */
+    .action-btns{display:flex;gap:6px;flex-wrap:nowrap}
+    .approve-btn{padding:5px 12px;background:#2e7d32;color:#fff;border:none;border-radius:6px;
+      font-size:12px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+    .approve-btn:hover{background:#1b5e20;transform:translateY(-1px)}
+    .reject-btn{padding:5px 12px;background:#c62828;color:#fff;border:none;border-radius:6px;
+      font-size:12px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+    .reject-btn:hover{background:#b71c1c;transform:translateY(-1px)}
+    .approved-tag{color:#2e7d32;font-size:12px;font-weight:700}
+    .rejected-tag{color:#c62828;font-size:12px;font-weight:700}
+    /* ─── BREAKDOWN ─── */
+    .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 32px 24px}
+    .breakdown-card{background:var(--card);border-radius:14px;padding:18px;
+      box-shadow:0 2px 12px rgba(26,35,126,.08);border:1px solid var(--border)}
+    .breakdown-card h4{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px}
+    .breakdown-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .breakdown-label{font-size:13px;color:#333;flex:1;font-weight:600}
+    .breakdown-bar-wrap{flex:2;background:#f0f3fa;border-radius:10px;height:8px;overflow:hidden}
+    .breakdown-bar{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--navy),var(--navy2))}
+    .breakdown-count{font-size:13px;color:#555;font-weight:700;min-width:32px;text-align:right}
+    /* ─── MODAL ─── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
+      align-items:center;justify-content:center}
+    .modal-overlay.active{display:flex}
+    .modal-box{background:#fff;border-radius:16px;padding:28px;max-width:420px;width:90%;
+      box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .modal-title{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--navy)}
+    .modal-note-label{font-size:12px;color:#555;margin-bottom:6px;font-weight:600}
+    .modal-note{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+      font-family:'Noto Sans',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none}
+    .modal-note:focus{border-color:var(--navy)}
+    .modal-btns{display:flex;gap:10px;margin-top:16px}
+    .modal-btn{flex:1;padding:11px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+    .modal-btn.confirm-approve{background:#2e7d32;color:#fff}
+    .modal-btn.confirm-reject{background:#c62828;color:#fff}
+    .modal-btn.cancel{background:#f0f3fa;color:#333}
+    @media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}
+      .breakdown-grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr}
+      .filter-row{flex-direction:column;align-items:stretch}
+      .table-section,.filter-row,.health-section,.stats-grid,.breakdown-grid{padding-left:16px;padding-right:16px}}
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"><span class="s"></span><span class="w"></span><span class="g"></span></div>
+
+<header class="admin-header">
+  <h1>🔐 Sarathi AI — Admin Dashboard</h1>
+  <div class="admin-header-right">
+    <span style="font-size:13px;opacity:.8">v{{ health.version }} · DB: {{ health.db|upper }}</span>
+    <a href="/" class="hdr-btn white">← Citizen View</a>
+    <a href="/admin/logout" class="hdr-btn red">Logout</a>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-icon">📋</span>
+    <div class="stat-num">{{ stats.total }}</div>
+    <div class="stat-label">Total Applications</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">👥</span>
+    <div class="stat-num">{{ stats.users }}</div>
+    <div class="stat-label">Registered Citizens</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">✅</span>
+    <div class="stat-num" style="color:#2e7d32" id="approved-count">—</div>
+    <div class="stat-label">Approved</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">❌</span>
+    <div class="stat-num" style="color:#c62828" id="rejected-count">—</div>
+    <div class="stat-label">Rejected</div>
+  </div>
+</div>
+
+<!-- System Health -->
+<div class="health-section">
+  <div style="font-size:13px;font-weight:700;color:#333;margin-bottom:8px">🖥️ System Health</div>
+  <div class="health-badges">
+    <span class="hbadge {{ 'on' if health.features.google_stt else 'off' }}">{{ '✅' if health.features.google_stt else '⚠️' }} GCP STT</span>
+    <span class="hbadge {{ 'on' if health.features.google_tts else 'off' }}">{{ '✅' if health.features.google_tts else '⚠️' }} GCP TTS</span>
+    <span class="hbadge {{ 'on' if health.features.gemini else 'off' }}">{{ '✅' if health.features.gemini else '⚠️' }} Gemini AI</span>
+    <span class="hbadge {{ 'on' if health.features.translate else 'off' }}">{{ '✅' if health.features.translate else '⚠️' }} Translate</span>
+    <span class="hbadge {{ 'on' if health.gcp_creds else 'off' }}">{{ '✅' if health.gcp_creds else '⚠️' }} GCP Credentials</span>
+    <span class="hbadge {{ 'on' if health.features.qr_code else 'off' }}">{{ '✅' if health.features.qr_code else '⚠️' }} QR Codes</span>
+  </div>
+</div>
+
+<!-- Scheme & Language Breakdown -->
+<div class="breakdown-grid">
+  <div class="breakdown-card">
+    <h4>📊 Applications by Scheme</h4>
+    {% if stats.by_scheme %}
+      {% set max_s = stats.by_scheme.values()|max %}
+      {% for scheme, count in stats.by_scheme.items()|sort(attribute='1',reverse=True) %}
+      <div class="breakdown-row">
+        <div class="breakdown-label">{{ scheme.replace('_',' ').title() }}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:{{ (count/max_s*100)|int }}%"></div></div>
+        <div class="breakdown-count">{{ count }}</div>
+      </div>
+      {% endfor %}
+    {% else %}<p style="color:#888;font-size:13px">No data yet</p>{% endif %}
+  </div>
+  <div class="breakdown-card">
+    <h4>🌐 Applications by Language</h4>
+    {% if stats.by_lang %}
+      {% set max_l = stats.by_lang.values()|max %}
+      {% for lang, count in stats.by_lang.items()|sort(attribute='1',reverse=True) %}
+      <div class="breakdown-row">
+        <div class="breakdown-label">{{ lang }}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:{{ (count/max_l*100)|int }}%;background:linear-gradient(90deg,#2e7d32,#388e3c)"></div></div>
+        <div class="breakdown-count">{{ count }}</div>
+      </div>
+      {% endfor %}
+    {% else %}<p style="color:#888;font-size:13px">No data yet</p>{% endif %}
+  </div>
+</div>
+
+<!-- Filter Row -->
+<div class="filter-row">
+  <label>Filter:</label>
+  <select class="filter-select" id="status-filter" onchange="applyFilters()">
+    <option value="">All Statuses</option>
+    <option value="submitted">Submitted</option>
+    <option value="approved">Approved</option>
+    <option value="rejected">Rejected</option>
+  </select>
+  <select class="filter-select" id="scheme-filter" onchange="applyFilters()">
+    <option value="">All Schemes</option>
+    {% for scheme in stats.by_scheme.keys() %}
+    <option value="{{ scheme }}">{{ scheme.replace('_',' ').title() }}</option>
+    {% endfor %}
+  </select>
+  <input type="text" id="search-input" placeholder="🔍 Search name, ref ID, mobile…" oninput="applyFilters()">
+  <button class="export-btn" onclick="exportCSV()">📥 Export CSV</button>
+</div>
+
+<!-- Submissions Table -->
+<div class="table-section">
+  <div class="section-title">📋 All Submissions ({{ submissions|length }})</div>
+  <table class="admin-table" id="submissions-table">
+    <thead>
+      <tr>
+        <th>#</th><th>Reference ID</th><th>Applicant</th><th>Mobile</th>
+        <th>State</th><th>Scheme</th><th>Language</th>
+        <th>Status</th><th>Submitted</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      {% for i, s in submissions|enumerate %}
+      <tr data-status="{{ s.status }}" data-scheme="{{ s.service_name }}"
+          data-search="{{ (s.applicant_name + s.ref_id + s.applicant_mobile)|lower }}">
+        <td style="color:#999;font-size:12px">{{ i+1 }}</td>
+        <td><strong style="font-size:12px;letter-spacing:.5px">{{ s.ref_id }}</strong></td>
+        <td>
+          <div style="font-weight:600">{{ s.applicant_name }}</div>
+          <div style="font-size:11px;color:#888">{{ s.applicant_email }}</div>
+        </td>
+        <td style="font-size:12px">{{ s.applicant_mobile }}</td>
+        <td style="font-size:12px">{{ s.applicant_state or '—' }}</td>
+        <td><span class="scheme-tag">{{ s.service_name.replace('_',' ').title() }}</span></td>
+        <td style="font-size:12px">{{ s.language }}</td>
+        <td>
+          <span class="status-pill status-{{ s.status }}" id="status-{{ s.ref_id }}">{{ s.status.title() }}</span>
+          {% if s.admin_note %}
+          <div style="font-size:10px;color:#666;margin-top:2px">📝 {{ s.admin_note[:40] }}{{ '…' if s.admin_note|length > 40 else '' }}</div>
+          {% endif %}
+        </td>
+        <td style="font-size:12px;white-space:nowrap">{{ s.submitted_at[:10] if s.submitted_at else '—' }}</td>
+        <td>
+          {% if s.status == 'submitted' %}
+          <div class="action-btns">
+            <button class="approve-btn" onclick="openModal('{{ s.ref_id }}','approve')">✅ Approve</button>
+            <button class="reject-btn" onclick="openModal('{{ s.ref_id }}','reject')">❌ Reject</button>
+          </div>
+          {% elif s.status == 'approved' %}
+          <span class="approved-tag">✅ Approved</span>
+          {% elif s.status == 'rejected' %}
+          <span class="rejected-tag">❌ Rejected</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not submissions %}
+      <tr><td colspan="10" style="text-align:center;padding:40px;color:#888">No submissions yet.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Approve/Reject Modal -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">Confirm Action</div>
+    <div class="modal-note-label">Add a note (optional):</div>
+    <textarea class="modal-note" id="modal-note" placeholder="e.g. Documents verified, approved. / Missing land records."></textarea>
+    <div class="modal-btns">
+      <button class="modal-btn" id="modal-confirm-btn" onclick="confirmAction()">Confirm</button>
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let modalRefId = '', modalAction = '';
+let approvedCount = 0, rejectedCount = 0;
+
+// Count initial stats
+document.addEventListener('DOMContentLoaded', () => {
+  const rows = document.querySelectorAll('#table-body tr');
+  rows.forEach(r => {
+    const s = r.dataset.status;
+    if(s==='approved') approvedCount++;
+    if(s==='rejected') rejectedCount++;
+  });
+  document.getElementById('approved-count').textContent = approvedCount;
+  document.getElementById('rejected-count').textContent = rejectedCount;
+});
+
+function openModal(refId, action) {
+  modalRefId = refId; modalAction = action;
+  document.getElementById('modal-title').textContent =
+    action==='approve' ? '✅ Approve Application — ' + refId : '❌ Reject Application — ' + refId;
+  const btn = document.getElementById('modal-confirm-btn');
+  btn.textContent = action==='approve' ? '✅ Approve' : '❌ Reject';
+  btn.className = 'modal-btn ' + (action==='approve' ? 'confirm-approve' : 'confirm-reject');
+  document.getElementById('modal-note').value = '';
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+async function confirmAction() {
+  const note = document.getElementById('modal-note').value.trim();
+  try {
+    const resp = await fetch('/api/admin/update_status', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ref_id: modalRefId, status: modalAction, note})
+    });
+    const data = await resp.json();
+    if(data.success) {
+      const pill = document.getElementById('status-' + modalRefId);
+      if(pill) {
+        pill.textContent = modalAction.charAt(0).toUpperCase() + modalAction.slice(1);
+        pill.className = 'status-pill status-' + modalAction;
+      }
+      // Update action buttons
+      const row = pill?.closest('tr');
+      if(row) {
+        row.dataset.status = modalAction;
+        const actionCell = row.cells[row.cells.length-1];
+        actionCell.innerHTML = modalAction==='approved'
+          ? '<span class="approved-tag">✅ Approved</span>'
+          : '<span class="rejected-tag">❌ Rejected</span>';
+        if(modalAction==='approved') { approvedCount++; document.getElementById('approved-count').textContent=approvedCount; }
+        else { rejectedCount++; document.getElementById('rejected-count').textContent=rejectedCount; }
+      }
+      closeModal();
+    } else {
+      alert('Action failed: ' + (data.error||'Unknown error'));
+    }
+  } catch(e) { alert('Network error. Please try again.'); }
+}
+
+function applyFilters() {
+  const status = document.getElementById('status-filter').value;
+  const scheme = document.getElementById('scheme-filter').value;
+  const search = document.getElementById('search-input').value.toLowerCase().trim();
+  document.querySelectorAll('#table-body tr').forEach(row => {
+    const matchStatus = !status || row.dataset.status===status;
+    const matchScheme = !scheme || row.dataset.scheme===scheme;
+    const matchSearch = !search || (row.dataset.search||'').includes(search);
+    row.style.display = (matchStatus && matchScheme && matchSearch) ? '' : 'none';
+  });
+}
+
+function exportCSV() {
+  const rows = [['#','Ref ID','Applicant','Mobile','State','Scheme','Language','Status','Date']];
+  document.querySelectorAll('#table-body tr').forEach((row,i) => {
+    if(row.style.display==='none') return;
+    const cells = Array.from(row.cells).slice(0,9).map(c=>'"'+c.innerText.replace(/"/g,'""')+'"');
+    rows.push(cells);
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'sarathi_submissions_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>

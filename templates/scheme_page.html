@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="{{ scheme.color }}">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <title>{{ scheme.icon }} {{ scheme.name | translate(user_lang) }} | Sarathi AI</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/static/mobile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{--color:{{ scheme.color }};--color-light:{{ scheme.color_light }};
+    --saffron:#FF9933;--green:#138808;--navy:#1a237e;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans',sans-serif;background:#f0f3fa;min-height:100vh;display:flex;flex-direction:column}
+    /* ─── TRICOLOR ─── */
+    .tricolor-bar{display:flex;height:6px;width:100%}
+    .tricolor-bar .s{flex:1;background:#FF9933}
+    .tricolor-bar .w{flex:1;background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
+    .tricolor-bar .g{flex:1;background:#138808}
+    /* ─── HEADER ─── */
+    .gov-header{background:#fff;border-bottom:2px solid #dce3f0;padding:8px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      box-shadow:0 2px 12px rgba(26,35,126,0.10)}
+    .hdr-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .nat-emblem{width:64px;height:80px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25))}
+    .hdr-title h1{font-family:'Noto Serif',serif;font-size:16px;font-weight:700;color:#1a237e}
+    .hdr-title p{font-size:10px;color:#666;letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+    /* ─── LANG PILLS in header ─── */
+    .hdr-lang{display:flex;align-items:center;gap:5px;margin-left:6px}
+    .hdr-lang-lbl{font-size:10px;color:#888;font-weight:600;white-space:nowrap}
+    .hdr-lang-pill{cursor:pointer;padding:3px 9px;border:1.5px solid #1a237e;border-radius:14px;
+      font-size:11px;font-weight:700;color:#1a237e;background:#fff;transition:.18s;user-select:none;
+      white-space:nowrap}
+    .hdr-lang-pill.active,.hdr-lang-pill:hover{background:#1a237e;color:#fff}
+    @media(max-width:480px){.hdr-lang-lbl{display:none}.hdr-lang{margin-left:2px}}
+    .hdr-center{display:flex;align-items:center;flex-direction:column;text-align:center}
+    @keyframes chakraSpin{to{transform:rotate(360deg)}}
+    .chakra-spin{width:56px;height:56px;animation:chakraSpin 10s linear infinite}
+    .hdr-right{display:flex;align-items:center;flex-direction:column;gap:4px;text-align:right}
+    .scheme-name-tag{font-family:'Noto Serif',serif;font-size:15px;font-weight:700;color:var(--color)}
+    .scheme-sub-tag{font-size:10px;color:#555;max-width:200px;text-align:right}
+    .nav-links{display:flex;gap:8px;align-items:center;margin-top:4px}
+    .nav-btn{font-size:11px;font-weight:700;padding:4px 10px;border-radius:5px;text-decoration:none;
+      background:var(--navy);color:#fff;transition:opacity .2s}
+    .nav-btn.danger{background:#c62828}
+    .nav-btn:hover{opacity:.85}
+    /* ─── MARQUEE ─── */
+    .marquee-bar{background:var(--color);color:#fff;font-size:12px;padding:4px 0;overflow:hidden}
+    .marquee-inner{display:inline-block;white-space:nowrap;animation:marquee 25s linear infinite;padding-left:100%}
+    @keyframes marquee{to{transform:translateX(-100%)}}
+    /* ─── PHOTO STATUS ─── */
+    .photo-status{font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;min-height:20px}
+    .photo-status.ok{color:#2e7d32;background:#e8f5e9}
+    .photo-status.error{color:#c62828;background:#ffebee}
+    .photo-status.checking{color:#1565c0;background:#e3f2fd}
+    /* ─── OUTER LAYOUT ─── */
+    .outer{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:16px;gap:18px}
+    /* ─── SCHEME CARD ─── */
+    .scheme-card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.10);
+      width:100%;max-width:680px;overflow:hidden}
+    .scheme-header{background:linear-gradient(135deg,var(--color),var(--color-light));
+      padding:20px 24px 16px;color:#fff}
+    .scheme-header-icon{font-size:36px;display:block;margin-bottom:6px}
+    .scheme-header h2{font-family:'Noto Serif',serif;font-size:22px;font-weight:700;margin-bottom:4px}
+    .tagline{font-size:13px;opacity:.9;margin-bottom:6px}
+    .ministry{font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:.5px}
+    .benefit-pill{display:inline-block;background:rgba(255,255,255,.2);
+      padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-top:8px}
+    .eligibility-bar{background:rgba(255,255,255,.12);border-radius:8px;
+      padding:8px 14px;margin-top:12px;font-size:12px;opacity:.9}
+    /* ─── PASS PHOTO SECTION ─── */
+    .photo-section{margin:14px 16px 0;background:#f8faff;border:1.5px solid #dce3f0;
+      border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px}
+    .photo-preview{width:72px;height:90px;object-fit:cover;border-radius:6px;
+      border:2px solid var(--color);display:none}
+    .photo-placeholder{width:72px;height:90px;border:2px dashed var(--color);border-radius:6px;
+      display:flex;align-items:center;justify-content:center;background:#f0f3fa;
+      font-size:22px;flex-shrink:0}
+    .photo-actions{flex:1}
+    .photo-actions h4{font-size:13px;font-weight:700;color:#1a237e;margin-bottom:8px}
+    .photo-actions p{font-size:11px;color:#666;margin-bottom:10px}
+    .photo-btns{display:flex;gap:8px}
+    .photo-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:12px;font-weight:600;
+      cursor:pointer;transition:.2s}
+    .photo-btn.upload{background:var(--color);color:#fff}
+    .photo-btn.capture{background:#1a237e;color:#fff}
+    .photo-btn:hover{opacity:.85}
+    #photo-file-input{display:none}
+    /* ─── FORM BODY ─── */
+    .form-body{padding:16px}
+    .elig-banner{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none}
+    .elig-banner.eligible{background:#e8f5e9;border-left:4px solid #2e7d32;color:#1b5e20;display:block}
+    .elig-banner.ineligible{background:#ffebee;border-left:4px solid #c62828;color:#b71c1c;display:block}
+    #success-banner{border-radius:8px;padding:12px 16px;background:#e8f5e9;
+      border-left:4px solid #2e7d32;color:#1b5e20;display:none;font-weight:600;margin-bottom:12px}
+    /* ─── PROGRESS ─── */
+    #progress-bar{margin-bottom:12px}
+    .progress-track{background:#f0f3fa;border-radius:10px;height:8px;overflow:hidden;margin-bottom:4px}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--color),var(--color-light));
+      border-radius:10px;transition:width .4s;width:0%}
+    #progress-text{font-size:11px;color:#666}
+    /* ─── CHAT PANEL ─── */
+    .chat-panel{background:#f8faff;border-radius:10px;padding:12px;margin-bottom:12px;
+      min-height:120px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+    .chat-bubble{display:flex;align-items:flex-start;gap:8px}
+    .chat-bubble.user{flex-direction:row-reverse}
+    .chat-avatar{font-size:20px;flex-shrink:0}
+    .chat-text{background:#fff;border:1px solid #dce3f0;border-radius:10px;
+      padding:8px 12px;font-size:13px;max-width:85%;line-height:1.5}
+    .chat-bubble.user .chat-text{background:var(--color);color:#fff;border-color:var(--color)}
+    .chat-bubble.listening .chat-text{background:#fffde7;border-color:#f9a825}
+    /* ─── CURRENT FIELD ─── */
+    .current-field-card{background:linear-gradient(135deg,var(--color),var(--color-light));
+      color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:none}
+    .current-field-label{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
+    .current-field-value{font-size:16px;font-weight:700;margin-top:2px}
+    /* ─── CONFIRM CARD ─── */
+    .confirm-card{background:#fff3e0;border:1.5px solid #ffa726;border-radius:10px;
+      padding:12px;margin-bottom:10px;display:none}
+    .confirm-card-title{font-size:12px;font-weight:700;color:#e65100;margin-bottom:6px}
+    .confirm-card-value{font-size:15px;font-weight:700;color:#1a237e;margin-bottom:10px}
+    .confirm-btns{display:flex;gap:8px}
+    .confirm-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;
+      font-weight:700;cursor:pointer}
+    .confirm-yes{background:#2e7d32;color:#fff}
+    .confirm-no{background:#c62828;color:#fff}
+    /* ─── VOICE PANEL ─── */
+    .voice-panel{text-align:center;padding:12px 0}
+    .mic-btn{background:linear-gradient(135deg,var(--color),var(--color-light));color:#fff;
+      border:none;border-radius:50px;padding:14px 28px;font-size:15px;font-weight:700;
+      cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:.2s;width:100%;max-width:320px}
+    .mic-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+    .mic-btn.listening{background:linear-gradient(135deg,#c62828,#e53935);animation:pulse .8s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 4px 16px rgba(198,40,40,.3)}50%{box-shadow:0 8px 30px rgba(198,40,40,.6)}}
+    #waveform{display:none;justify-content:center;align-items:center;gap:3px;margin:12px auto;height:36px}
+    #waveform.active{display:flex}
+    .wave-bar{width:4px;background:var(--color);border-radius:2px;height:8px;
+      animation:wave 1s ease-in-out infinite}
+    .wave-bar:nth-child(1){animation-delay:.0s}.wave-bar:nth-child(2){animation-delay:.1s}
+    .wave-bar:nth-child(3){animation-delay:.2s}.wave-bar:nth-child(4){animation-delay:.3s}
+    .wave-bar:nth-child(5){animation-delay:.4s}.wave-bar:nth-child(6){animation-delay:.5s}
+    .wave-bar:nth-child(7){animation-delay:.6s}.wave-bar:nth-child(8){animation-delay:.7s}
+    .wave-bar:nth-child(9){animation-delay:.8s}.wave-bar:nth-child(10){animation-delay:.9s}
+    .wave-bar:nth-child(11){animation-delay:1.0s}.wave-bar:nth-child(12){animation-delay:1.1s}
+    @keyframes wave{0%,100%{height:8px}50%{height:28px}}
+    .live-text-box{min-height:32px;background:#f8faff;border:1px solid #dce3f0;border-radius:8px;
+      padding:8px 12px;font-size:13px;color:#666;margin:8px 0;text-align:left}
+    .voice-settings{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .voice-toggle{padding:6px 14px;border:1.5px solid var(--color);border-radius:20px;
+      font-size:12px;color:var(--color);background:#fff;cursor:pointer;transition:.2s}
+    .voice-toggle.active,.voice-toggle:hover{background:var(--color);color:#fff}
+    /* ─── OCR UPLOAD ─── */
+    .ocr-upload-card{border:2px dashed var(--color);border-radius:12px;padding:16px;
+      text-align:center;cursor:pointer;margin-top:12px;transition:.2s;background:#f8faff}
+    .ocr-upload-card:hover{background:#e8f0fe}
+    .ocr-upload-icon{font-size:28px;margin-bottom:4px}
+    .ocr-upload-text{font-weight:700;color:var(--color);font-size:13px}
+    .ocr-upload-sub{font-size:11px;color:#666;margin-top:2px}
+    .ocr-progress{display:none;margin-top:8px}
+    .ocr-progress-bar{background:#e0e0e0;border-radius:10px;height:6px;overflow:hidden;margin-top:4px}
+    .ocr-progress-fill{height:100%;background:var(--color);width:0%;transition:width .3s}
+    /* ─── FIELDS SUMMARY ─── */
+    .fields-summary{margin-top:14px;border:1px solid #dce3f0;border-radius:10px;overflow:hidden}
+    .fields-summary summary{padding:10px 14px;cursor:pointer;font-weight:600;color:var(--color);
+      background:#f8faff;font-size:13px}
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+    .field-item{display:flex;flex-direction:column;gap:4px}
+    .field-item-label{font-size:10px;color:#666;text-transform:uppercase;font-weight:600}
+    .field-item-input{border:1.5px solid #dce3f0;border-radius:7px;padding:7px 10px;
+      font-size:13px;outline:none;transition:.2s;font-family:'Noto Sans',sans-serif}
+    .field-item-input:focus{border-color:var(--color);box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+    /* ─── QR ─── */
+    #qr-container{text-align:center;margin-top:14px}
+    #qr-container img{border:2px solid var(--color);border-radius:10px;padding:8px;
+      background:#fff;max-width:160px}
+    /* ─── SECURITY NOTE ─── */
+    .security-note{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+    .security-badge{background:#f0f3fa;border:1px solid #dce3f0;border-radius:20px;
+      padding:3px 10px;font-size:10px;color:#555}
+    /* ─── SIDEBAR (scheme info) ─── */
+    .sidebar{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
+    .info-card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:14px}
+    .info-card h4{font-size:12px;font-weight:700;color:var(--color);margin-bottom:8px;
+      text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f0f3fa;padding-bottom:6px}
+    .info-card p{font-size:12px;color:#444;line-height:1.6}
+    .doc-list{list-style:none}
+    .doc-list li{font-size:12px;color:#444;padding:3px 0;display:flex;align-items:center;gap:6px}
+    .doc-list li::before{content:"📄";font-size:12px}
+    .ext-link{display:block;margin-top:10px;text-align:center;background:var(--color);
+      color:#fff;text-decoration:none;padding:8px;border-radius:8px;font-size:12px;font-weight:700}
+    /* ─── FOOTER ─── */
+    .pro-footer{background:#1a237e;color:rgba(255,255,255,.85);font-size:12px}
+    .footer-top{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 40px 16px}
+    .footer-col h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;
+      border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:5px}
+    .footer-col p,.footer-col a{color:rgba(255,255,255,.7);font-size:12px;
+      text-decoration:none;display:block;margin-bottom:4px;line-height:1.6}
+    .footer-col a:hover{color:#fff}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.15);padding:12px 40px;text-align:center}
+    .footer-bottom p{color:rgba(255,255,255,.6);font-size:11px}
+    /* ─── RESPONSIVE ─── */
+    @media(max-width:900px){.outer{flex-direction:column;align-items:center}
+      .sidebar{width:100%;max-width:680px;flex-direction:row;flex-wrap:wrap}
+      .info-card{flex:1;min-width:240px}}
+    @media(max-width:600px){.gov-header{padding:6px 12px}
+      .hdr-title h1{font-size:13px}.chakra-spin{width:42px;height:42px}
+      .scheme-name-tag{font-size:12px}.photo-btns{flex-direction:column}
+      .fields-grid{grid-template-columns:1fr}
+      .footer-top{grid-template-columns:1fr 1fr;padding:16px}
+      .footer-bottom{padding:10px 16px}}
+  </style>
+</head>
+<body>
+<div class="tricolor-bar"><span class="s"></span><span class="w"></span><span class="g"></span></div>
+
+<header class="gov-header">
+  <div class="hdr-left">
+    <img class="nat-emblem" src="/static/state_emblem.png" alt="State Emblem of India">
+    <div class="hdr-title"><h1>Project Sarathi</h1><p>Govt of India</p></div>
+    <div class="hdr-lang">
+      <span class="hdr-lang-lbl">🌐</span>
+      <span class="hdr-lang-pill {% if user_lang == 'en-IN' %}active{% endif %}"
+            id="pill-en" onclick="setLang('en-IN',this)">EN</span>
+      <span class="hdr-lang-pill {% if user_lang == 'hi-IN' %}active{% endif %}"
+            id="pill-hi" onclick="setLang('hi-IN',this)">हि</span>
+      <span class="hdr-lang-pill {% if user_lang == 'te-IN' %}active{% endif %}"
+            id="pill-te" onclick="setLang('te-IN',this)">తె</span>
+    </div>
+  </div>
+  <div class="hdr-center">
+    <svg class="chakra-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#003580" stroke-width="4"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#003580" stroke-width="1"/>
+      <circle cx="50" cy="50" r="7" fill="#003580"/>
+      <circle cx="50" cy="50" r="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <g stroke="#003580" stroke-width="1.8" stroke-linecap="round">
+        {% for i in range(24) %}<line x1="50" y1="43" x2="50" y2="8" transform="rotate({{ i*15 }} 50 50)"/>{% endfor %}
+      </g>
+    </svg>
+  </div>
+  <div class="hdr-right">
+    <span class="scheme-name-tag">{{ scheme.icon }} {{ scheme.name | translate(user_lang) }}</span>
+    <span class="scheme-sub-tag">{{ scheme.full_name | translate(user_lang) }}</span>
+    <div class="nav-links">
+      <a href="/" class="nav-btn">← Dashboard</a>
+      <a href="/logout" class="nav-btn danger">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="marquee-bar">
+  <div class="marquee-inner">🇮🇳 &nbsp; {{ scheme.full_name | translate(user_lang) }} &nbsp;|&nbsp; {{ scheme.ministry | translate(user_lang) }} &nbsp;|&nbsp; {{ scheme.benefit_pill | translate(user_lang) }} &nbsp;|&nbsp; {{ "Sarathi AI — Voice-Assisted Citizen Services" | translate(user_lang) }} &nbsp;🇮🇳</div>
+</div>
+
+<div class="outer">
+  <div class="scheme-card">
+    <div class="scheme-header">
+      <span class="scheme-header-icon">{{ scheme.icon }}</span>
+      <h2>{{ scheme.full_name | translate(user_lang) }}</h2>
+      <div class="tagline">{{ scheme.tagline | translate(user_lang) }}</div>
+      <div class="ministry">{{ scheme.ministry | translate(user_lang) }}</div>
+      <div class="benefit-pill">{{ scheme.benefit_pill | translate(user_lang) }}</div>
+      <div class="eligibility-bar">✅ {{ "Eligibility" | translate(user_lang) }}: {{ scheme.eligibility | translate(user_lang) }}</div>
+    </div>
+
+    <div class="photo-section">
+      <div class="photo-placeholder" id="photo-placeholder">📷</div>
+      <img class="photo-preview" id="photo-preview" alt="Pass Photo" src="">
+      <div class="photo-actions">
+        <h4>📸 {{ "Applicant Pass Photo" | translate(user_lang) }}</h4>
+        <p>{{ "Upload a recent passport-size photograph (mandatory for application)" | translate(user_lang) }}</p>
+        <div class="photo-btns">
+          <button class="photo-btn upload" onclick="document.getElementById('photo-file-input').click()">📂 {{ "Upload Photo" | translate(user_lang) }}</button>
+          <button class="photo-btn capture" onclick="capturePhoto()">📷 {{ "Take Photo" | translate(user_lang) }}</button>
+        </div>
+        <input type="file" id="photo-file-input" accept="image/*" onchange="previewPhoto(this)">
+        <div id="photo-status" class="photo-status" style="margin-top:6px;font-size:12px;font-weight:600;"></div>
+      </div>
+    </div>
+
+    <div class="form-body">
+      <div id="eligibility-banner" class="elig-banner"></div>
+      <div id="success-banner"></div>
+
+      <div id="progress-bar">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-steps"><span id="progress-text">0 of {{ scheme.fields|length }} fields filled</span></div>
+      </div>
+
+      <div id="chat-panel" class="chat-panel">
+        <div class="chat-bubble ai">
+          <div class="chat-avatar">🤖</div>
+          <div><div class="chat-text" id="initial-msg">⏳ Starting AI assistant in your language…</div></div>
+        </div>
+      </div>
+
+      <div id="current-field-card" class="current-field-card">
+        <div class="current-field-label">{{ "Currently asking about" | translate(user_lang) }}</div>
+        <div id="current-field-value" class="current-field-value">—</div>
+      </div>
+
+      <div id="confirm-card" class="confirm-card">
+        <div class="confirm-card-title">✋ {{ "Please confirm — I heard:" | translate(user_lang) }}</div>
+        <div class="confirm-card-value" id="confirm-display">—</div>
+        <div class="confirm-btns">
+          <button class="confirm-btn confirm-yes" onclick="confirmYes()">✅ {{ "Yes, Correct" | translate(user_lang) }}</button>
+          <button class="confirm-btn confirm-no" onclick="confirmNo()">❌ {{ "No, Say Again" | translate(user_lang) }}</button>
+        </div>
+      </div>
+
+      <div class="voice-panel">
+        <button id="micBtn" class="mic-btn" onclick="startVoiceFlow()">🎙️ {{ "Tap to Speak" | translate(user_lang) }}</button>
+        <div id="waveform">
+          {% for _ in range(12) %}<div class="wave-bar"></div>{% endfor %}
+        </div>
+        <div id="live-text" class="live-text-box"></div>
+        <div class="voice-settings">
+          <button class="voice-toggle active" data-gender="female" onclick="toggleVoice('female')">👩 Female Voice</button>
+          <button class="voice-toggle" data-gender="male" onclick="toggleVoice('male')">👨 Male Voice</button>
+        </div>
+      </div>
+
+      <div class="ocr-upload-card" id="ocr-upload-card" onclick="document.getElementById('ocr-file-input').click()">
+        <input type="file" id="ocr-file-input" accept="image/*,.pdf" style="display:none">
+        <div class="ocr-upload-icon">📷</div>
+        <div class="ocr-upload-text">{{ "Upload Aadhaar / Passbook Photo" | translate(user_lang) }}</div>
+        <div class="ocr-upload-sub">AI auto-fills fields from your document</div>
+      </div>
+      <div id="ocr-progress" class="ocr-progress">
+        <span id="ocr-progress-text">Reading…</span>
+        <div class="ocr-progress-bar"><div id="ocr-progress-fill" class="ocr-progress-fill"></div></div>
+      </div>
+
+      <details class="fields-summary">
+        <summary>📋 {{ "View / Edit All Fields" | translate(user_lang) }}</summary>
+        <div class="fields-grid">
+          {% for f in scheme.fields %}
+          <div class="field-item">
+            <div class="field-item-label">{{ f.label_en | translate(user_lang) }}</div>
+            <input class="field-item-input" type="{{ 'tel' if f.numeric else 'text' }}" id="{{ f.id }}" placeholder="Will be filled by voice" autocomplete="off">
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+
+      <div id="qr-container"></div>
+
+      <div class="security-note">
+        <span class="security-badge">🔒 AES-128 Encrypted</span>
+        <span class="security-badge">✅ HMAC-SHA256</span>
+        <span class="security-badge">🇮🇳 Govt of India</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="info-card">
+      <h4>{{ "About this Scheme" | translate(user_lang) }}</h4>
+      <p>{{ scheme.description | translate(user_lang) }}</p>
+      <a href="{{ scheme.external_url }}" target="_blank" class="ext-link">🔗 {{ "Official Website" | translate(user_lang) }}</a>
+    </div>
+    <div class="info-card">
+      <h4>{{ "Required Documents" | translate(user_lang) }}</h4>
+      <ul class="doc-list">
+        {% for doc in scheme.documents %}
+        <li>{{ doc | translate(user_lang) }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>{{ "Eligibility Criteria" | translate(user_lang) }}</h4>
+      <p>{{ scheme.eligibility | translate(user_lang) }}</p>
+    </div>
+  </div>
+</div>
+
+<footer class="pro-footer">
+  <div class="footer-top">
+    <div class="footer-col">
+      <h4>🇮🇳 {{ scheme.name | translate(user_lang) }}</h4>
+      <p>{{ scheme.full_name | translate(user_lang) }}</p>
+      <p style="margin-top:6px">{{ scheme.ministry | translate(user_lang) }}</p>
+      <p style="margin-top:6px;color:rgba(255,255,255,.5);font-size:10px">{{ scheme.benefit_pill | translate(user_lang) }}</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="/">Dashboard</a>
+      <a href="/my_submissions">My Applications</a>
+      <a href="{{ scheme.external_url }}" target="_blank">Official Portal</a>
+      <a href="/logout">Logout</a>
+    </div>
+    <div class="footer-col">
+      <h4>Government Portals</h4>
+      <a href="https://india.gov.in" target="_blank">India.gov.in</a>
+      <a href="https://myscheme.gov.in" target="_blank">MyScheme</a>
+      <a href="https://umang.gov.in" target="_blank">UMANG App</a>
+      <a href="https://digilocker.gov.in" target="_blank">DigiLocker</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help & Support</h4>
+      <p><br>Government of India<br>HYDERABAD – 500 001</p>
+      <p style="margin-top:8px">📞 Helpline: 1800-111-555</p>
+      <p>✉️ support@sarathi.gov.in</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Project Sarathi · {{ scheme.ministry | translate(user_lang) }} · All Rights Reserved</p>
+    <p style="margin-top:4px;color:rgba(255,255,255,.4);font-size:10px">All submitted data is AES-128 encrypted and HMAC-SHA256 verified. Powered by Sarathi AI | Reference ID issued upon successful submission.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+window.SARATHI_USE_GCP_STT={{ use_gcp_stt|tojson }};
+window.SARATHI_USE_GCP_TTS={{ use_gcp_tts|tojson }};
+window.SARATHI_USE_GEMINI={{ use_gemini|tojson }};
+window.SARATHI_SERVICE_ID="{{ scheme.id }}";
+window.SARATHI_SCHEME_NAME="{{ scheme.name }}";
+window.SARATHI_SCHEME_FULL="{{ scheme.full_name }}";
+window.SARATHI_USER_LANG="{{ user_lang }}";
+window.SARATHI_LANG_CONFIRMED={{ lang_confirmed|tojson }};
+window.SARATHI_FIELDS={{ fields_json|safe }};
+
+// ─── UPDATED: HEADER LANG SWITCH ───
+function setLang(lang, el) {
+  // Update UI pill immediately to show selection
+  document.querySelectorAll('.hdr-lang-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+
+  // Show a loading message in the chat panel
+  const panel = document.getElementById('chat-panel');
+  if(panel) {
+    panel.innerHTML = '<div class="chat-bubble ai"><div class="chat-avatar">🤖</div>' +
+                      '<div><div class="chat-text">🔄 Switching language / భాష మారుతోంది...</div></div></div>';
+  }
+
+  // Send the selected language code to your Flask route
+  fetch('/set_language', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ language: lang })
+  })
+  .then(response => {
+      if (response.ok) {
+          // IMPORTANT: Reload the page so Jinja templates fetch the new translations
+          window.location.reload(); 
+      } else {
+          console.error("Failed to update language on the server.");
+      }
+  })
+  .catch(error => {
+      console.error("Network error while updating language:", error);
+  });
+}
+
+// ─── VOICE GENDER ───
+function toggleVoice(gender) {
+  document.querySelectorAll('.voice-toggle').forEach(b=>b.classList.remove('active'));
+  const t = document.querySelector(`[data-gender="${gender}"]`);
+  if(t) t.classList.add('active');
+  if(window.sarathiSetGender) window.sarathiSetGender(gender);
+}
+
+// ─── PASSPORT PHOTO UPLOAD + GEMINI VALIDATION ───
+function previewPhoto(input) {
+  if(!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('photo-preview');
+    if(img){ img.src = e.target.result; img.style.display='block'; }
+    const ph = document.getElementById('photo-placeholder');
+    if(ph) ph.style.display='none';
+  };
+  reader.readAsDataURL(file);
+  validatePassportPhoto(file);
+}
+
+async function validatePassportPhoto(file) {
+  const statusEl = document.getElementById('photo-status');
+  if(statusEl){ statusEl.textContent='🔍 Validating photo…'; statusEl.className='photo-status checking'; }
+
+  const fd = new FormData();
+  fd.append('photo', file);
+  try {
+    const resp = await fetch('/api/validate_photo', {method:'POST', body:fd});
+    const data = await resp.json();
+    if(data.valid){
+      if(statusEl){ statusEl.textContent='✅ Photo valid — proceeding'; statusEl.className='photo-status ok'; }
+      window.SARATHI_PHOTO_VALID = true;
+      // Notify voice engine via custom event (avoids photo-input vs photo-file-input ID mismatch)
+      document.dispatchEvent(new CustomEvent('sarathiPhotoValidated', {detail:{valid:true}}));
+    } else {
+      if(statusEl){ statusEl.textContent='❌ '+data.reason+' — please re-upload'; statusEl.className='photo-status error'; }
+      window.SARATHI_PHOTO_VALID = false;
+      // Clear the preview so user must upload again
+      const img = document.getElementById('photo-preview');
+      if(img){ img.src=''; img.style.display='none'; }
+      const ph = document.getElementById('photo-placeholder');
+      if(ph) ph.style.display='block';
+      const inp = document.getElementById('photo-file-input');
+      if(inp) inp.value='';
+      document.dispatchEvent(new CustomEvent('sarathiPhotoValidated', {detail:{valid:false}}));
+    }
+  } catch(e) {
+    // Network error — accept photo
+    window.SARATHI_PHOTO_VALID = true;
+    if(statusEl){ statusEl.textContent='✅ Photo accepted'; statusEl.className='photo-status ok'; }
+    document.dispatchEvent(new CustomEvent('sarathiPhotoValidated', {detail:{valid:true}}));
+  }
+}
+
+async function capturePhoto() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+    const video = document.createElement('video'); video.srcObject = stream;
+    await video.play();
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video,0,0);
+    stream.getTracks().forEach(t=>t.stop());
+    const img = document.getElementById('photo-preview');
+    if(img){ img.src = canvas.toDataURL('image/jpeg'); img.style.display='block'; }
+    const ph = document.getElementById('photo-placeholder');
+    if(ph) ph.style.display='none';
+    // Convert canvas to blob and validate
+    canvas.toBlob(blob => { if(blob) validatePassportPhoto(blob); }, 'image/jpeg', 0.9);
+  } catch(e) {
+    alert('Camera not available. Please use the upload option.');
+  }
+}
+</script>
+<script src="/static/voice/api.js"></script>
+<script src="/static/voice/chatUI.js"></script>
+<script src="/static/voice/audio.js"></script>
+<script src="/static/voice/stt.js"></script>
+<script src="/static/voice/tts.js"></script>
+<script src="/static/voice/eligibility.js"></script>
+<script src="/static/voice/formFlow.js"></script>
+<script src="/static/voice/sarathi_main.js"></script>
+</body>
+</html>

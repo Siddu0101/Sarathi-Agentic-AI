@@ -1,0 +1,43 @@
+# ── SECRETS — never commit these ─────────────────────────────────────────────
+.env
+sarathi_enc.key
+*.key
+*.pem
+*.p12
+secrets/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.Python
+
+# ── Virtual environments ─────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ── Local dev ────────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.sqlite
+*.db
+instance/
+uploads/
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Zip exports ───────────────────────────────────────────────────────────────
+*.zip
+*.tar.gz

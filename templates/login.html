@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a237e">
+  <title>Login | Project Sarathi</title>
+  <link rel="manifest" href="/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --saffron:#FF9933;--white:#FFFFFF;--green:#138808;
+      --navy:#1a237e;--navy2:#283593;--gold:#c8a84b;
+      --text:#1a1a2e;--text2:#4a4a6a;--border:#dce3f0;
+      --bg:#f0f3fa;--card:#ffffff;--error:#c62828;--success:#2e7d32;
+    }
+    body{font-family:'Noto Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+    /* tricolor */
+    .tricolor-bar{display:flex;height:6px;width:100%}
+    .tricolor-bar span{flex:1}
+    .tricolor-bar .saffron{background:var(--saffron)}
+    .tricolor-bar .white{background:#fff;border-top:1px solid #eee;border-bottom:1px solid #eee}
+    .tricolor-bar .green{background:var(--green)}
+    /* header */
+    .gov-header{background:#fff;border-bottom:2px solid var(--border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(26,35,126,0.10)}
+    .hdr-left{display:flex;align-items:center;gap:12px}
+    .nat-emblem{width:64px;height:80px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25))}
+    .hdr-title h1{font-family:'Noto Serif',serif;font-size:20px;font-weight:700;color:var(--navy)}
+    .hdr-title p{font-size:11px;color:var(--text2);font-weight:500;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+    .hdr-center{display:flex;align-items:center;justify-content:center}
+    @keyframes chakraSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .chakra-spin{width:70px;height:70px;animation:chakraSpin 10s linear infinite;transform-origin:center}
+    .hdr-right{display:flex;align-items:center}
+    .admin-btn{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;letter-spacing:0.5px;transition:background 0.2s}
+    .admin-btn:hover{background:var(--navy2)}
+    /* marquee */
+    .marquee-bar{background:var(--navy);color:#fff;font-size:12px;padding:5px 0;overflow:hidden}
+    .marquee-inner{display:inline-block;white-space:nowrap;animation:marquee 30s linear infinite;padding-left:100%}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+    /* page */
+    .page-body{flex:1;display:flex;align-items:center;justify-content:center;padding:28px 16px 48px;background:linear-gradient(160deg,#e8edf8 0%,#f5f7fd 60%,#e8f5e9 100%)}
+    /* card */
+    .auth-card{background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(26,35,126,0.13);width:100%;max-width:480px;overflow:hidden;border:1px solid var(--border);animation:cardIn .35s ease}
+    @keyframes cardIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+    .card-hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:24px 32px 20px;text-align:center;position:relative}
+    .card-hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--saffron),var(--white),var(--green))}
+    .card-hdr h2{font-family:'Noto Serif',serif;color:#fff;font-size:22px;font-weight:700;margin-top:8px}
+    .card-hdr p{color:rgba(255,255,255,0.75);font-size:13px;margin-top:3px}
+    .card-body{padding:24px 32px 32px}
+    /* flash */
+    .flash{background:#fff3e0;border-left:4px solid var(--saffron);color:#e65100;padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+    .flash.demo{background:#e8f5e9;border-left-color:var(--green);color:#1b5e20}
+    /* fields */
+    .field{margin-bottom:13px}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+    .field input{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'Noto Sans',sans-serif;color:var(--text);background:#fafbff;outline:none;transition:border-color .2s,box-shadow .2s}
+    .field input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,35,126,.1);background:#fff}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .pw-wrap{position:relative}
+    .pw-wrap input{padding-right:44px}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text2)}
+    .req{color:var(--error);margin-left:2px}
+    /* captcha */
+    .captcha-wrap{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+    .captcha-img{height:58px;border-radius:8px;border:2px solid var(--border);cursor:pointer;background:#f5f5f5;flex:1;object-fit:contain}
+    .captcha-refresh{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:0 14px;height:58px;font-size:20px;cursor:pointer;transition:background .2s}
+    .captcha-refresh:hover{background:var(--navy2)}
+    .captcha-input{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;font-family:'Noto Serif',serif;letter-spacing:4px;text-transform:uppercase;outline:none;transition:border-color .2s}
+    .captcha-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,35,126,.1)}
+    /* submit */
+    .submit-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Noto Sans',sans-serif;cursor:pointer;letter-spacing:.5px;transition:transform .15s,box-shadow .15s;margin-top:8px}
+    .submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,35,126,.3)}
+    .submit-btn:active{transform:translateY(0)}
+    /* bottom links */
+    .auth-links{display:flex;justify-content:space-between;margin-top:16px;font-size:13px}
+    .auth-links a{color:var(--navy);font-weight:600;text-decoration:none}
+    .auth-links a:hover{text-decoration:underline}
+    /* footer */
+    .pro-footer{background:var(--navy);color:rgba(255,255,255,.85);font-size:12px}
+    .footer-top{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:28px 48px 20px}
+    .footer-col h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.2)}
+    .footer-col p{line-height:1.7;color:rgba(255,255,255,.7);font-size:12px}
+    .footer-col ul{list-style:none}
+    .footer-col ul li{margin-bottom:6px}
+    .footer-col ul li a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;transition:color .2s}
+    .footer-col ul li a:hover{color:#fff}
+    .footer-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .footer-tags span{background:rgba(255,255,255,.1);padding:3px 8px;border-radius:4px;font-size:10px;letter-spacing:.5px}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.15);padding:14px 48px;text-align:center}
+    .footer-bottom p{color:rgba(255,255,255,.6);font-size:11.5px}
+    .footer-disc{margin-top:4px;font-size:10.5px;color:rgba(255,255,255,.4) !important}
+    @media(max-width:640px){.footer-top{grid-template-columns:1fr 1fr;padding:20px 20px 16px}.footer-bottom{padding:12px 20px}}
+    @media(max-width:480px){.footer-top{grid-template-columns:1fr}.gov-header{padding:10px 16px}.hdr-title h1{font-size:16px}.chakra-spin{width:50px;height:50px}.card-body{padding:18px 18px 24px}.field-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<!-- ═══ SHARED PROFESSIONAL HEADER ═══ -->
+<div class="tricolor-bar"><span class="saffron"></span><span class="white"></span><span class="green"></span></div>
+<header class="gov-header">
+  <!-- Left: National Emblem + Title -->
+  <div class="hdr-left">
+    <img class="nat-emblem" src="/static/state_emblem.png" alt="State Emblem of India">
+    <div class="hdr-title">
+      <h1>Project Sarathi</h1>
+      <p>Govt of India</p>
+    </div>
+  </div>
+  <!-- Center: Rotating Ashoka Chakra -->
+  <div class="hdr-center">
+    <svg class="chakra-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#003580" stroke-width="4"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#003580" stroke-width="1"/>
+      <circle cx="50" cy="50" r="7" fill="#003580"/>
+      <circle cx="50" cy="50" r="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <g stroke="#003580" stroke-width="1.8" stroke-linecap="round">
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(0 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(15 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(30 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(45 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(60 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(75 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(90 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(105 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(120 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(135 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(150 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(165 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(180 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(195 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(210 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(225 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(240 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(255 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(270 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(285 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(300 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(315 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(330 50 50)"/>
+        <line x1="50" y1="43" x2="50" y2="8" transform="rotate(345 50 50)"/>
+      </g>
+    </svg>
+  </div>
+  <!-- Right: Admin Login -->
+  <div class="hdr-right">
+    <a href="/admin_login" class="admin-btn">🔐 Admin Login</a>
+  </div>
+</header>
+
+<div class="marquee-bar">
+  <div class="marquee-inner">🇮🇳 &nbsp; Welcome to Project Sarathi — AI-Powered Citizen Services &nbsp;|&nbsp; Secure Login Portal &nbsp;|&nbsp; सत्यमेव जयते &nbsp;|&nbsp; Digital India Initiative &nbsp;🇮🇳</div>
+</div>
+
+<div class="page-body">
+  <div class="auth-card">
+    <div class="card-hdr">
+      <div style="font-size:32px">🔐</div>
+      <h2>Citizen Login</h2>
+      <p>Project Sarathi — Government of India</p>
+    </div>
+    <div class="card-body">
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for msg in messages %}
+          <div class="flash {% if 'DEMO' in msg or 'OTP:' in msg %}demo{% endif %}">
+            {% if 'DEMO' in msg %}🔑{% elif 'sent' in msg.lower() %}📧{% else %}⚠️{% endif %} {{ msg }}
+          </div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+
+      <form id="loginForm" action="/login" method="POST" onsubmit="handleLogin(event)">
+        <div class="field-row">
+          <div class="field">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" name="first" id="loginFirst" placeholder="First name" required autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" name="last" id="loginLast" placeholder="Last name" required autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Registered Mobile Number <span class="req">*</span></label>
+          <input type="tel" name="mobile" id="loginMobile" placeholder="10-digit mobile number" required maxlength="10" pattern="\d{10}" inputmode="numeric">
+        </div>
+
+        <div class="field">
+          <label>Registered Email Address <span class="req">*</span></label>
+          <input type="email" name="email" id="loginEmail" placeholder="Your registered email" required autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label>Password <span class="req">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" name="password" id="loginPassword" placeholder="Enter your password" required>
+            <button type="button" class="pw-toggle" onclick="togglePw('loginPassword',this)">👁</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Security CAPTCHA <span class="req">*</span></label>
+          <div class="captcha-wrap">
+            <img id="captchaImg" class="captcha-img" src="" alt="CAPTCHA" title="Click to refresh" onclick="loadCaptcha()">
+            <button type="button" class="captcha-refresh" onclick="loadCaptcha()" title="Refresh CAPTCHA">🔄</button>
+            <button type="button" class="captcha-refresh" onclick="speakCaptcha()" title="Listen to CAPTCHA" style="font-size:18px;background:#2e7d32">🔊</button>
+          </div>
+          <input type="text" name="captcha" id="captchaInput" class="captcha-input" placeholder="Enter code shown above" required autocomplete="off" maxlength="6">
+          <div style="font-size:11px;color:#666;margin-top:4px">🔊 Click the speaker button to hear the CAPTCHA spoken aloud</div>
+        </div>
+
+        <button type="submit" class="submit-btn">🔐 Verify &amp; Send OTP to Email</button>
+      </form>
+
+      <div class="auth-links">
+        <a href="/forgot_password">🔑 Forgot Password?</a>
+        <a href="/register">✏️ Create Account</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHARED PROFESSIONAL FOOTER ═══ -->
+<footer class="pro-footer">
+  <div class="footer-top">
+    <div class="footer-col">
+      <h4>🇮🇳 Project Sarathi</h4>
+      <p>AI-powered citizen services portal connecting Indians to government welfare schemes and services.</p>
+      <div class="footer-tags">
+        <span>Digital India</span><span>MeitY</span><span>G20</span><span>Make in India</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Citizen Login</a></li>
+        <li><a href="/register">Register</a></li>
+        <li><a href="/my_submissions">My Applications</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Government Portals</h4>
+      <ul>
+        <li><a href="https://india.gov.in" target="_blank">India.gov.in</a></li>
+        <li><a href="https://digitalindia.gov.in" target="_blank">Digital India</a></li>
+        <li><a href="https://digilocker.gov.in" target="_blank">DigiLocker</a></li>
+        <li><a href="https://umang.gov.in" target="_blank">UMANG</a></li>
+        <li><a href="https://myscheme.gov.in" target="_blank">MyScheme</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact &amp; Support</h4>
+      <p><br>Government of India<br>HYDERABAD – 500 001</p>
+      <p style="margin-top:8px;">📞 Helpline: 1800-111-555<br>✉️ support@sarathi.gov.in</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Project Sarathi &nbsp;·&nbsp; Government of India &nbsp;·&nbsp; All Rights Reserved</p>
+    <p class="footer-disc">This is a government digital services portal. For grievances, contact your nearest Common Service Centre (CSC).</p>
+  </div>
+</footer>
+<script>
+  let _captchaLoaded = false;
+  async function loadCaptcha() {
+    try {
+      const r = await fetch('/api/captcha?scope=login');
+      const d = await r.json();
+      if (d.success) {
+        document.getElementById('captchaImg').src = d.image;
+        _captchaLoaded = true;
+      }
+    } catch(e) { console.error('Captcha load failed:', e); }
+  }
+  loadCaptcha();
+
+  function speakCaptcha() {
+    fetch('/api/captcha_speak?scope=login')
+      .then(r => r.json())
+      .then(d => {
+        if(!d.success) { alert('Captcha not loaded yet. Please wait a moment.'); return; }
+        if('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(d.phrase);
+          u.lang = 'en-IN'; u.rate = 0.65; u.pitch = 1.0;
+          window.speechSynthesis.speak(u);
+        } else {
+          alert(d.phrase);
+        }
+      })
+      .catch(() => alert('Could not read captcha. Please look at the image and type the code.'));
+  }
+
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  }
+
+  function handleLogin(e) {
+    const mobile = document.getElementById('loginMobile').value.trim();
+    if (!/^\d{10}$/.test(mobile)) {
+      e.preventDefault();
+      alert('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    const captcha = document.getElementById('captchaInput').value.trim();
+    if (captcha.length < 6) {
+      e.preventDefault();
+      alert('Please enter the 6-character CAPTCHA code.');
+      return;
+    }
+    // All good — let the form submit naturally to /login
+  }
+</script>
+</body>
+</html>
